@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" data-webtui-theme="nord">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Portfolio</title>
+    </head>
+    <body>
+        <h1># Rinav</h1>
+
+        <div class="main-dabbe">
+            <div class="dabbe-ka-content">
+                <blockquote id="about-content">
+                    I’m Rinav, from Jammu, India, currently pursuing B.Tech. in CSE at NIT (National Institute of Technology), Srinagar.
+                    I architect <strong> high-performance systems, build robust networking stacks, and craft cutting-edge WebGL2 & OpenGL</strong> experiences.
+                    Constantly exploring quantum computing, DevOps, and scalable web development.
+                </blockquote>
+            </div>
+        </div>
+
+        <div box-="round" shear-="top" class="main-dabbe">
+            <span is-="badge" variant-="nord11">Projects</span>
+
+            <!-- Tabs -->
+            <div row-="true" class="dabbe-ka-content" id="table-tabs">
+                <button is-="button" variant-="accent" size-="small" id="tab-systems">    Systems</button>
+                <button is-="button" variant-="background3" size-="small" id="tab-web">    Web</button>
+            </div>
+
+            <!-- Systems Projects -->
+            <div id="systems-projects" class="dabbe-ka-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Tech</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="https://github.com/yourname/cache-db" target="_blank">
+                                    In-Memory Caching DB
+                                </a>
+                            </td>
+                            <td title="C++ coroutines for async I/O, epoll for event loop">
+                                C++ / Coroutines / epoll
+                            </td>
+                            <td>Redis-inspired KV-store with custom hash-table & single-threaded async I/O.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://github.com/yourname/term-3d" target="_blank">
+                                    Terminal Graphics Library
+                                </a>
+                            </td>
+                            <td title="C++ rendering pipeline, ANSI escape codes for colors/3D UI">
+                                C++ / ANSI / 3D
+                            </td>
+                            <td>Immediate-mode 3D rendering & widgets inside the terminal.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://github.com/yourname/b-ldr" target="_blank">
+                                    B ldr
+                                </a>
+                            </td>
+                            <td title="C++ multithreading for job scheduling & graph building">
+                                C++ / Concurrency
+                            </td>
+                            <td>Header-only build tool with dependency graphs & parallel compilation.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Web Projects -->
+            <div id="web-projects" hidden class="dabbe-ka-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Tech</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="https://github.com/yourname/chat-app" target="_blank">
+                                    Real-Time Chat App
+                                </a>
+                            </td>
+                            <td title="React for UI, Zustand for state, WebSockets for realtime updates">
+                                React / Zustand / WS
+                            </td>
+                            <td>Full-stack chat with authentication, media uploads & realtime messaging.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://github.com/yourname/tank-game" target="_blank">
+                                    Tanks Fog-of-War Game
+                                </a>
+                            </td>
+                            <td title="TypeScript for logic, Canvas for rendering, WS for multiplayer">
+                                TS / Canvas / WS
+                            </td>
+                            <td>Turn-based online tank battle with fog-of-war mechanics & multiplayer sync.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div box-="round" shear-="top" class="main-dabbe">
+            <span is-="badge" variant-="nord11">Skills</span>
+
+            <div class="dabbe-ka-content" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;">
+
+                <!-- Languages Subsection -->
+                <div>
+                    <span is="badge" variant-="nord8">Languages</span>
+                    <div style="margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px;">
+                        <span is-="badge" variant-="nord9">Modern C++</span>
+                        <span is-="badge" variant-="nord9">C</span>
+                        <span is-="badge" variant-="nord9">Python</span>
+                        <span is-="badge" variant-="nord9">Golang</span>
+                        <span is-="badge" variant-="nord9">JavaScript</span>
+                        <span is-="badge" variant-="nord9">TypeScript</span>
+                        <span is-="badge" variant-="nord9">Java</span>
+                        <span is-="badge" variant-="nord9">SQL</span>
+                    </div>
+                </div>
+
+                <div is-="separator"></div>
+
+                <!-- Tools Subsection -->
+                <div>
+                    <span is="badge" variant-="nord9">Tools & Tech</span>
+                    <div style="margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px;">
+                        <span is-="badge" variant-="nord9">Git</span>
+                        <span is-="badge" variant-="nord9">Docker</span>
+                        <span is-="badge" variant-="nord9">Kubernetes</span>
+                        <span is-="badge" variant-="nord9">Linux</span>
+                        <span is-="badge" variant-="nord9">Shell programming</span>
+                    </div>
+                </div>
+
+                <div is-="separator"></div>
+
+                <!-- Frameworks / Libraries Subsection -->
+                <div>
+                    <span is="badge" variant-="nord14">Frameworks, APIs & Libraries</span>
+                    <div style="margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px;">
+                        <span is-="badge" variant-="nord9">React</span>
+                        <span is-="badge" variant-="nord9">Zustand</span>
+                        <span is-="badge" variant-="nord9">raylib</span>
+                        <span is-="badge" variant-="nord9">Nextjs</span>
+                        <span is-="badge" variant-="nord9">OpenGL & WebGL</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Currently Working On -->
+        <div box-="round" shear-="top" class="main-dabbe">
+            <span is-="badge" variant-="background0">[ META INFO ]</span>
+
+            <div class="dabbe-ka-content">
+                <h3> Currently Working On </h3>
+                <div class="work-item">
+                    <div><span is-="badge" variant-="nord12" class="work-item-heading">Phos: Scripting Language</span></div>
+                    <span>Building a statically typed interpreted language with elegant syntax</span>
+                </div>
+
+                <h3> Github Stats </h3>
+                <!-- Overview badges -->
+                <div box-="round" shear-="top" >
+                    <span is-="badge" variant-="background0">[ Overview ]</span>
+
+                    <div class="dabbe-ka-content">
+                        <div>
+                            <div id="github-overview" style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 13px;">
+                                <span id="overview-loader" is-="spinner" variant-="dots"></span>
+                                <!-- JS will inject badges -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div box-="round" shear-="top" >
+                    <span is-="badge" variant-="background0">[ Top Languages ]</span>
+                    <!-- Top Languages -->
+                    <div class="dabbe-ka-content">
+                        <div>
+                            <h4>Top Languages</h4>
+                            <div is-="separator" style="width: 100%;"></div>
+                            <div id="github-langs" style="margin-top: 6px; display: flex; flex-direction: column; gap: 4px;">
+                                <span id="langs-loader" is-="spinner" variant-="dots"></span>
+                                <!-- JS will inject progress bars -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div box-="round" shear-="top" class="main-dabbe" id = "contact-section">
+            <span is-="badge" variant-="nord11">Contact</span>
+
+            <div class="dabbe-ka-content">
+
+                <!-- Social Links -->
+                <div class="contact-block">
+                    <h3> <span is="badge" variant-="nord9">Find me on</span> </h3>
+                    <div class="contact-links">
+                        <button variant-="nord12" size-="small"> <a href="https://github.com/rrrinav" target="_blank"> GitHub</a> </button>
+                        <button variant-="nord12" size-="small"> <a href="https://www.linkedin.com/in/rinav-hansa-b0bb23291/" target="_blank"> LinkedIn</a> </button>
+                        <button variant-="nord12" size-="small"> <a href="mailto:rinavhansa4@gmail.com" target="_blank">󰇮 Email</a> </button>
+                    </div>
+                </div>
+
+                <div is-="separator" direction-="x" style="width: 100%;"></div>
+
+                <!-- Message Box -->
+                <div class="contact-block">
+                    <h3> <span is="badge" variant-="nord8">Send me a message</span> </h3>
+                    <div class="contact-form">
+                        <input id="contact-name" placeholder="Your name" />
+                        <input id="contact-email" placeholder="Your email" />
+                        <input id="contact-subject" placeholder="Subject" />
+                        <textarea id="contact-message" placeholder="Type your message here..."></textarea>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <button id="send-btn" is-="button" variant-="nord7" size-="medium"> Send</button>
+                            <span id="send-status" style="font-family:monospace; font-size:0.9rem; color:var(--nord4)"></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Separator -->
+        <div is-="separator" style="width: 100%;"></div>
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Made with <a href="https://webtui.sh" target="_blank">WebTUI</a> • © 2025 Rinav (rinavhansa4@gmail.com)</p>
+        </footer>
+
+        <script type="module">
+        const tabSystems = document.getElementById("tab-systems");
+        const tabWeb = document.getElementById("tab-web");
+        const sys = document.getElementById("systems-projects");
+        const web = document.getElementById("web-projects");
+
+        function activateTab(activeBtn, inactiveBtn, showEl, hideEl) {
+            showEl.hidden = false;
+            hideEl.hidden = true;
+            activeBtn.setAttribute("variant-", "accent");
+            inactiveBtn.setAttribute("variant-", "background3");
+        }
+
+        tabSystems.addEventListener("click", () =>
+            activateTab(tabSystems, tabWeb, sys, web)
+        );
+
+        tabWeb.addEventListener("click", () =>
+            activateTab(tabWeb, tabSystems, web, sys)
+        );
+        const username = "rrrinav";
+
+        async function fetchGitHubStats() {
+            const overviewContainer = document.getElementById("github-overview");
+            const langsContainer = document.getElementById("github-langs");
+
+            // Initial loaders
+            overviewContainer.innerHTML = `<span is-="spinner" variant-="dots"></span>`;
+            langsContainer.innerHTML = `<span is-="spinner" variant-="dots"></span>`;
+
+            try {
+                // Fetch user info
+                const userRes = await fetch(`https://api.github.com/users/${username}`);
+                if (!userRes.ok) throw new Error("User not found");
+
+                const user = await userRes.json();
+
+                overviewContainer.innerHTML = `
+                <span><p><code>Repos: ${user.public_repos}</code></p></span>
+                <span><p><code>Followers: ${user.followers}</code></p></span>
+                <span><p><code>Following: ${user.following}</code></p></span>
+                `;
+
+                // Fetch repos for languages
+                const reposRes = await fetch(`https://api.github.com/users/${username}/repos?per_page=100`);
+                if (!reposRes.ok) throw new Error("Could not fetch repos");
+
+                const repos = await reposRes.json();
+
+                // Only process if repos is an array
+                if (!Array.isArray(repos)) throw new Error("Invalid repos data");
+
+                const langMap = {};
+                repos.forEach(repo => {
+                    if(repo.language){
+                        langMap[repo.language] = (langMap[repo.language] || 0) + 1;
+                    }
+                });
+
+                const total = Object.values(langMap).reduce((a,b)=>a+b,0);
+                const sortedLangs = Object.entries(langMap)
+                .sort((a,b) => b[1] - a[1])
+                .slice(0,5); // top 5 languages
+
+                langsContainer.innerHTML = ""; // clear loader
+
+                const badgeWidth = 16;
+                const percentWidth = 6;
+
+                sortedLangs.forEach(([lang, count]) => {
+                    const percent = Math.round((count / total) * 100);
+
+                    const row = document.createElement("div");
+                    row.style.display = "flex";
+                    row.style.alignItems = "center";
+                    row.style.gap = "4px";
+                    row.style.marginBottom = "4px";
+
+                    const badge = document.createElement("span");
+                    badge.setAttribute("is-", "badge");
+                    badge.setAttribute("variant-", "nord9");
+                    badge.style.flex = `0 0 ${badgeWidth}ch`;
+                    badge.textContent = lang;
+
+                    const progress = document.createElement("div");
+                    progress.setAttribute("is-", "progress");
+                    progress.setAttribute("value", percent);
+                    progress.setAttribute("max", "100");
+                    progress.style.flex = "1";
+
+                    const percentSpan = document.createElement("span");
+                    percentSpan.setAttribute("is-", "badge");
+                    percentSpan.setAttribute("variant-", "nord8");
+                    percentSpan.style.flex = `0 0 ${percentWidth}ch`;
+                    percentSpan.textContent = `${percent}%`;
+
+                    row.appendChild(badge);
+                    row.appendChild(progress);
+                    row.appendChild(percentSpan);
+
+                    langsContainer.appendChild(row);
+                });
+
+            } catch (err) {
+                console.warn(err);
+                // Keep showing spinners if data fails
+                overviewContainer.innerHTML = `<span is-="spinner" variant-="dots"></span>`;
+                langsContainer.innerHTML = `<span is-="spinner" variant-="dots"></span>`;
+            }
+        }
+
+        fetchGitHubStats();
+        </script>
+
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"> </script>
+        <script type="text/javascript">
+        emailjs.init({ publicKey: "-aXxR4Xy7OaIs_5_F" });
+        const sendBtn = document.getElementById("send-btn");
+        const statusEl = document.getElementById("send-status");
+
+        // Track last send time
+        let lastSent = 0;
+        const cooldownMs = 30_000; // 30 seconds cooldown
+
+        async function sendMessage() {
+            const now = Date.now();
+            if (now - lastSent < cooldownMs) {
+                statusEl.textContent = `Please wait ${Math.ceil((cooldownMs - (now - lastSent))/1000)}s before sending again.`;
+                return;
+            }
+
+            const from_name = document.getElementById("contact-name").value;
+            const from_mail = document.getElementById("contact-email").value;
+            const subject = document.getElementById('contact-subject').value;
+            const message = document.getElementById("contact-message").value
+
+            if (!from_name || !from_mail || !subject || !message) {
+                statusEl.textContent = "Please fill in all fields before sending.";
+                return;
+            }
+            const message_data = `${from_name} sent you from ${from_mail}: ${message}`;
+
+            statusEl.innerHTML = `Sending... <span is-="spinner" variant-="dots"></span>`;
+
+            try {
+                await emailjs.send("service_zgz5mye", "template_8xkz6rk", { message: message_data });
+                lastSent = now;
+                statusEl.textContent = "Message sent successfully!";
+            } catch(err) {
+                console.error(err);
+                statusEl.textContent = "Failed to send. Try again.";
+            }
+        }
+
+        sendBtn.addEventListener("click", sendMessage);
+        </script>
+        <script type="module" src="bundle.js"></script>
+    </body>
+</html>
