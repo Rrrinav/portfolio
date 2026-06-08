@@ -7,7 +7,6 @@ module.exports = {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
         clean: true,
-        publicPath: './',
     },
     mode: 'development',
     module: {
@@ -20,14 +19,14 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './public/index.html', // your HTML template
+            template: './public/index.html',
         }),
     ],
     devServer: {
         static: path.join(__dirname, 'public'),
         compress: true,
+        host: '127.0.0.1',
         port: 8080,
         open: true,
     },
 };
-

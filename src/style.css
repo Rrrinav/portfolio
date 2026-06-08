@@ -1,5 +1,4 @@
 @import '@webtui/css';
-@import '@webtui/theme-gruvbox';
 @import '@webtui/theme-nord';
 @import '@webtui/plugin-nf';
 @layer base, utils, components;
