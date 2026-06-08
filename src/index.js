@@ -1,3 +1,6 @@
+import '@webtui/css';
+import '@webtui/theme-nord';
+import '@webtui/plugin-nf';
 import './style.css';
 
 document.documentElement.setAttribute('data-webtui-theme', 'nord');
@@ -72,9 +75,7 @@ function renderProjects() {
     const systemsBody = document.getElementById('systems-tbody');
     const webBody = document.getElementById('web-tbody');
 
-    if (!systemsBody || !webBody) {
-        return;
-    }
+    if (!systemsBody || !webBody) return;
 
     systemsBody.textContent = '';
     webBody.textContent = '';
@@ -113,9 +114,7 @@ async function fetchGitHubStats() {
     const overviewContainer = document.getElementById('github-overview');
     const langsContainer = document.getElementById('github-langs');
 
-    if (!overviewContainer || !langsContainer) {
-        return;
-    }
+    if (!overviewContainer || !langsContainer) return;
 
     overviewContainer.innerHTML = '<span is-="spinner" variant-="dots"></span>';
     langsContainer.innerHTML = '<span is-="spinner" variant-="dots"></span>';
@@ -123,9 +122,7 @@ async function fetchGitHubStats() {
     try {
         const username = 'rrrinav';
         const userRes = await fetch(`https://api.github.com/users/${username}`);
-        if (!userRes.ok) {
-            throw new Error('User not found');
-        }
+        if (!userRes.ok) throw new Error('User not found');
 
         const user = await userRes.json();
         overviewContainer.innerHTML = `
@@ -135,26 +132,18 @@ async function fetchGitHubStats() {
         `;
 
         const reposRes = await fetch(`https://api.github.com/users/${username}/repos?per_page=100`);
-        if (!reposRes.ok) {
-            throw new Error('Could not fetch repos');
-        }
+        if (!reposRes.ok) throw new Error('Could not fetch repos');
 
         const repos = await reposRes.json();
-        if (!Array.isArray(repos)) {
-            throw new Error('Invalid repos data');
-        }
+        if (!Array.isArray(repos)) throw new Error('Invalid repos data');
 
         const langMap = {};
         repos.forEach((repo) => {
-            if (repo.language) {
-                langMap[repo.language] = (langMap[repo.language] || 0) + 1;
-            }
+            if (repo.language) langMap[repo.language] = (langMap[repo.language] || 0) + 1;
         });
 
-        const total = Object.values(langMap).reduce((sum, value) => sum + value, 0);
-        const sortedLangs = Object.entries(langMap)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 5);
+        const total = Object.values(langMap).reduce((sum, v) => sum + v, 0);
+        const sortedLangs = Object.entries(langMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
         langsContainer.innerHTML = '';
 
@@ -162,10 +151,7 @@ async function fetchGitHubStats() {
             const percent = total === 0 ? 0 : Math.round((count / total) * 100);
 
             const row = document.createElement('div');
-            row.style.display = 'flex';
-            row.style.alignItems = 'center';
-            row.style.gap = '4px';
-            row.style.marginBottom = '4px';
+            row.style.cssText = 'display:flex;align-items:center;gap:4px;margin-bottom:4px;';
 
             const badge = document.createElement('span');
             badge.setAttribute('is-', 'badge');
@@ -191,9 +177,9 @@ async function fetchGitHubStats() {
             langsContainer.appendChild(row);
         });
     } catch (error) {
-        console.warn(error);
-        overviewContainer.innerHTML = '<span is-="spinner" variant-="dots"></span>';
-        langsContainer.innerHTML = '<span is-="spinner" variant-="dots"></span>';
+        console.warn('GitHub stats failed:', error);
+        overviewContainer.innerHTML = '<code>Could not load GitHub stats.</code>';
+        langsContainer.innerHTML = '<code>Could not load language data.</code>';
     }
 }
 
@@ -204,17 +190,20 @@ function init() {
     const webProjects = document.getElementById('web-projects');
 
     if (tabSystems && tabWeb && systemsProjects && webProjects) {
-        tabSystems.addEventListener('click', () => {
-            activateTab(tabSystems, tabWeb, systemsProjects, webProjects);
-        });
-
-        tabWeb.addEventListener('click', () => {
-            activateTab(tabWeb, tabSystems, webProjects, systemsProjects);
-        });
+        tabSystems.addEventListener('click', () => activateTab(tabSystems, tabWeb, systemsProjects, webProjects));
+        tabWeb.addEventListener('click', () => activateTab(tabWeb, tabSystems, webProjects, systemsProjects));
     }
 
+    // Run immediately — DOM is already available since script is deferred by webpack
     renderProjects();
+
+    // Fire-and-forget: GitHub stats load independently, never block projects
     fetchGitHubStats();
 }
 
-document.addEventListener('DOMContentLoaded', init);
+// Use both: covers deferred scripts AND the rare case DOMContentLoaded already fired
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
