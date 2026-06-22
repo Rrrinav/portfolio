@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rrrinav | Systems</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg_color: #030303;
+            --surface_color: #0a0a0a;
+            --border_color: rgba(255, 255, 255, 0.15);
+            --border_dim: rgba(255, 255, 255, 0.05);
+            --text_main: #f8fafc;
+            --text_muted: #8b949e;
+            --accent: #ffffff;
+            --spotlight: rgba(255, 255, 255, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body,
+        html {
+            background-color: var(--bg_color);
+            color: var(--text_main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        ::selection {
+            background: var(--text_main);
+            color: var(--bg_color);
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* background layers */
+        #spotlight {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            background: radial-gradient(circle 600px at var(--mouse_x, 50vw) var(--mouse_y, 50vh), var(--spotlight), transparent 80%);
+        }
+
+        .bg_grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -3;
+            background-image:
+                linear-gradient(to right, var(--border_dim) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--border_dim) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+        }
+
+        .watermark {
+            position: fixed;
+            font-weight: 900;
+            font-size: 18vw;
+            color: rgba(255, 255, 255, 0.015);
+            z-index: -2;
+            pointer-events: none;
+            white-space: nowrap;
+            user-select: none;
+            letter-spacing: -0.05em;
+        }
+
+        .wm_1 {
+            top: 10%;
+            left: -5%;
+            transform: rotate(-90deg) translateY(-50%);
+        }
+
+        .wm_2 {
+            bottom: -5%;
+            right: -2%;
+            font-size: 12vw;
+        }
+
+        /* overlapping schematic grid lines (outermost border) */
+        .grid_line {
+            position: fixed;
+            background: var(--border_color);
+            z-index: 9998;
+            pointer-events: none;
+        }
+
+        .line_h_top {
+            top: 3rem;
+            left: 0;
+            right: 0;
+            height: 1px;
+        }
+
+        .line_h_bot {
+            bottom: 3rem;
+            left: 0;
+            right: 0;
+            height: 1px;
+        }
+
+        .line_v_left {
+            left: 4rem;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+        }
+
+        .line_v_right {
+            right: 4rem;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+        }
+
+        .node {
+            position: fixed;
+            width: 5px;
+            height: 5px;
+            background: var(--bg_color);
+            border: 1px solid var(--text_main);
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .node_tl {
+            top: 3rem;
+            left: 4rem;
+        }
+
+        .node_tr {
+            top: 3rem;
+            right: 4rem;
+        }
+
+        .node_bl {
+            bottom: 3rem;
+            left: 4rem;
+        }
+
+        .node_br {
+            bottom: 3rem;
+            right: 4rem;
+        }
+
+        /* layered parallax hud frames */
+        .hud_layer {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9997;
+            transition: transform 0.1s ease-out;
+        }
+
+        .frame_beta {
+            top: 4.5rem;
+            bottom: 4.5rem;
+            left: 5.5rem;
+            right: 5.5rem;
+            border: 1px dashed var(--border_dim);
+            transform: translate(calc(var(--px, 0) * 3px), calc(var(--py, 0) * 3px));
+        }
+
+        .frame_gamma {
+            top: 6rem;
+            bottom: 6rem;
+            left: 7rem;
+            right: 7rem;
+            transform: translate(calc(var(--px, 0) * 8px), calc(var(--py, 0) * 8px));
+        }
+
+        .frame_gamma::before,
+        .frame_gamma::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--text_muted);
+            opacity: 0.2;
+        }
+
+        .frame_gamma::before {
+            top: 0;
+            left: 0;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .frame_gamma::after {
+            bottom: 0;
+            right: 0;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* tactical navbar */
+        nav {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(calc(-50% + var(--px, 0) * 3px)) translateY(calc(var(--py, 0) * 3px));
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border_color);
+            padding: 0.5rem 1rem;
+            gap: 2rem;
+            border-radius: 2px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.1s ease-out;
+        }
+
+        .nav_module_id {
+            font-size: 0.65rem;
+            color: var(--text_muted);
+            letter-spacing: 0.2em;
+            padding-right: 1.5rem;
+            border-right: 1px dotted var(--border_color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav_module_id::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 6px;
+            background: var(--text_main);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .nav_links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav_links a {
+            color: var(--text_muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            transition: all 0.2s ease;
+            padding: 0.2rem 0.5rem;
+            position: relative;
+        }
+
+        .nav_links a:hover {
+            color: var(--text_main);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav_links a::before,
+        .nav_links a::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .nav_links a::before {
+            top: 0;
+            left: 0;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .nav_links a::after {
+            bottom: 0;
+            right: 0;
+            border-left: none;
+            border-top: none;
+        }
+
+        .nav_links a:hover::before,
+        .nav_links a:hover::after {
+            border-color: var(--text_main);
+        }
+
+        /* layout */
+        .container {
+            max-width: calc(100vw - 8rem);
+            margin: 0 auto;
+            padding: 8rem 4rem 8rem 4rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* animated data bus dividers */
+        .sys_divider {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 4rem 0;
+            opacity: 0.7;
+        }
+
+        .sys_divider .node_tag {
+            font-size: 0.65rem;
+            color: var(--text_muted);
+            letter-spacing: 0.2em;
+        }
+
+        .sys_divider .trace_wrap {
+            flex: 1;
+            height: 1px;
+            position: relative;
+            overflow: hidden;
+            background: repeating-linear-gradient(90deg, var(--border_color) 0, var(--border_color) 6px, transparent 6px, transparent 12px);
+        }
+
+        .sys_divider .trace_signal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--text_main), transparent);
+            transform: translateX(-100%);
+            animation: data_flow 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .sys_divider:nth-child(even) .trace_signal {
+            animation-delay: 1.5s;
+            animation-duration: 4.5s;
+            animation-direction: reverse;
+        }
+
+        @keyframes data_flow {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* typography and sections */
+        header {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .sys_init {
+            font-size: 0.85rem;
+            color: var(--text_muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sys_init::before {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: var(--text_muted);
+        }
+
+        .blink {
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        h1 {
+            font-size: clamp(3.5rem, 9vw, 7rem);
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            line-height: 0.9;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: var(--text_muted);
+            max-width: 650px;
+            line-height: 1.7;
+            border-left: 2px dashed var(--border_color);
+            padding-left: 1.5rem;
+        }
+
+        section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            text-transform: uppercase;
+        }
+
+        h2::before {
+            content: '//';
+            color: var(--text_muted);
+            font-weight: 400;
+            font-family: monospace;
+        }
+
+        /* content box for sections */
+        .content_box {
+            border: 1px dashed var(--border_color);
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 3rem;
+            position: relative;
+            transition: border-color 0.3s ease;
+        }
+
+        .content_box::before,
+        .content_box::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border: 1px solid var(--text_muted);
+            transition: all 0.3s;
+        }
+
+        .content_box::before {
+            top: -1px;
+            left: -1px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .content_box::after {
+            bottom: -1px;
+            right: -1px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .content_box:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* grids and cards */
+        .projects_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .project_card {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .project_title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .project_title a {
+            color: var(--text_main);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .project_title a:hover {
+            color: var(--text_muted);
+        }
+
+        .tech_stack {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text_muted);
+            letter-spacing: 0.05em;
+        }
+
+        ul.bullet_list {
+            list-style: none;
+            margin-top: 0.5rem;
+            margin-left: 1rem;
+        }
+
+        ul.bullet_list li {
+            position: relative;
+            color: var(--text_muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+        }
+
+        ul.bullet_list li::before {
+            content: '>';
+            position: absolute;
+            left: -1.2rem;
+            color: var(--border_color);
+            font-family: monospace;
+        }
+
+        /* skills layout */
+        .skills_grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 2rem 3rem;
+            align-items: baseline;
+        }
+
+        @media (max-width: 768px) {
+            .skills_grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem 1.5rem;
+            }
+
+            .skills_cat {
+                margin-top: 1rem;
+            }
+        }
+
+        .skills_cat {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text_main);
+            text-transform: uppercase;
+        }
+
+        .skills_list {
+            color: var(--text_muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* telemetry board */
+        .telemetry_board {
+            display: flex;
+            gap: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .t_col {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .t_header {
+            font-size: 0.75rem;
+            color: var(--text_muted);
+            margin-bottom: 2rem;
+            letter-spacing: 0.2em;
+            border-bottom: 1px dashed var(--border_color);
+            padding-bottom: 1rem;
+        }
+
+        .t_row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            font-size: 0.85rem;
+        }
+
+        /* contact links */
+        .contact_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .contact_link {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 2rem;
+            border: 1px dashed var(--border_color);
+            text-decoration: none;
+            color: var(--text_main);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .contact_link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--text_main);
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: -1;
+        }
+
+        .contact_link:hover {
+            color: var(--bg_color);
+            border-style: solid;
+            border-color: var(--text_main);
+        }
+
+        .contact_link:hover::before {
+            transform: translateY(0);
+        }
+
+        .contact_link span:first-child {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 700;
+            transition: color 0.3s;
+        }
+
+        .contact_link:hover span:first-child {
+            color: var(--bg_color);
+            opacity: 0.7;
+        }
+
+        @media (max-width: 1000px) {
+            .line_v_left {
+                left: 1.5rem;
+            }
+
+            .line_v_right {
+                right: 1.5rem;
+            }
+
+            .node_tl {
+                left: 1.5rem;
+            }
+
+            .node_tr {
+                right: 1.5rem;
+            }
+
+            .node_bl {
+                left: 1.5rem;
+            }
+
+            .node_br {
+                right: 1.5rem;
+            }
+
+            .frame_beta,
+            .frame_gamma {
+                display: none;
+            }
+
+            nav {
+                width: 90%;
+                justify-content: center;
+                top: 1rem;
+            }
+
+            .nav_module_id {
+                display: none;
+            }
+
+            .container {
+                max-width: calc(100vw - 3rem);
+                padding: 6rem 1rem;
+            }
+
+            .content_box {
+                padding: 2rem;
+            }
+
+            .telemetry_board {
+                flex-direction: column;
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- outer grid bounding box -->
+    <div class="grid_line line_h_top"></div>
+    <div class="grid_line line_h_bot"></div>
+    <div class="grid_line line_v_left"></div>
+    <div class="grid_line line_v_right"></div>
+
+    <!-- grid intersection nodes -->
+    <div class="node node_tl"></div>
+    <div class="node node_tr"></div>
+    <div class="node node_bl"></div>
+    <div class="node node_br"></div>
+
+    <!-- multi depth hud frames -->
+    <div class="hud_layer frame_beta"></div>
+    <div class="hud_layer frame_gamma"></div>
+
+    <!-- ambient layers -->
+    <div id="spotlight"></div>
+    <div class="bg_grid"></div>
+    <div class="watermark wm_1">0x8FA3</div>
+    <div class="watermark mono wm_2">SYS_CORE</div>
+
+    <!-- tactical navbar -->
+    <nav class="mono">
+        <div class="nav_module_id">CTRL_PNL</div>
+        <div class="nav_links">
+            <a href="#about">Init</a>
+            <a href="#projects">Proj</a>
+            <a href="#skills">Tech</a>
+            <a href="#contact">Conn</a>
+        </div>
+    </nav>
+
+    <!-- content payload -->
+    <div class="container">
+
+        <header id="about" class="reveal">
+            <div class="sys_init mono">sys.status == online <span class="blink">_</span></div>
+            <h1>RRRINAV</h1>
+            <p class="subtitle">Extracting maximum performance from modern hardware. Building zero-dependency
+                infrastructure and low-level asynchronous runtimes in C++23.</p>
+        </header>
+
+        <div class="sys_divider" aria-hidden="true">
+            <div class="node_tag mono">0x01</div>
+            <div class="trace_wrap">
+                <div class="trace_signal"></div>
+            </div>
+            <div class="node_tag mono">0x02</div>
+        </div>
+
+        <section id="projects" class="reveal">
+            <h2>Architecture</h2>
+            <div class="content_box">
+                <div class="projects_grid">
+
+                    <div class="project_card">
+                        <div class="project_title"><a href="https://github.com/rrrinav/Phos" target="_blank">Phos
+                                Compiler</a></div>
+                        <div class="tech_stack">C++23, Compilers, Language Design</div>
+                        <ul class="bullet_list">
+                            <li>Designed and developed a statically-typed programming language from scratch, building a
+                                custom lexer, recursive descent parser, and AST-walking interpreter.</li>
+                            <li>Engineered a robust type checker enforcing strict null-safety and implemented a highly
+                                optimized, non-atomic reference-counting smart pointer.</li>
+                            <li>Wrote a custom arena allocator to drastically reduce memory fragmentation and improve
+                                allocation speeds.</li>
+                        </ul>
+                    </div>
+
+                    <div class="project_card">
+                        <div class="project_title"><a href="https://github.com/rrrinav/rio" target="_blank">Rio: Async
+                                I/O</a></div>
+                        <div class="tech_stack">C++23, C++20 Modules, io_uring</div>
+                        <ul class="bullet_list">
+                            <li>Engineered a zero-cost, asynchronous I/O and networking framework in C++23 utilizing
+                                Linux's io_uring to achieve high-throughput, non-blocking socket operations.</li>
+                            <li>Architected a zero-allocation Future library using advanced template metaprogramming and
+                                C++20 modules to enable seamless async pipeline composition.</li>
+                            <li>Guaranteed strict memory safety and lock-free task cancellation by designing a custom
+                                heap-detach pattern.</li>
+                        </ul>
+                    </div>
+
+                    <div class="project_card">
+                        <div class="project_title"><a href="https://github.com/rrrinav/rivage" target="_blank">Rivage:
+                                Map-Reduce</a></div>
+                        <div class="tech_stack">Golang, gRPC, Distributed Systems</div>
+                        <ul class="bullet_list">
+                            <li>Architected a zero-dependency distributed Map-Reduce computation engine in Golang,
+                                utilizing gRPC for highly concurrent, low-latency cross-node remote procedure calls.
+                            </li>
+                            <li>Designed robust worker nodes for parallel data processing, achieving fault tolerance and
+                                seamless client-server state synchronization.</li>
+                            <li>Implemented a custom Write-Ahead Logging (WAL) mechanism to ensure strict data
+                                durability and system recovery.</li>
+                        </ul>
+                    </div>
+
+                    <div class="project_card">
+                        <div class="project_title"><a href="https://github.com/Rrrinav/Dal-Monitoring"
+                                target="_blank">Drone Surveillance</a></div>
+                        <div class="tech_stack">Computer Vision, Edge Inference</div>
+                        <ul class="bullet_list">
+                            <li>Built an autonomous UAV system to detect and geographically map floating lake trash
+                                using a custom semantic segmentation model.</li>
+                            <li>Integrated a real-time aerial image capture and inference pipeline on edge hardware to
+                                generate dynamic pollution heatmaps.</li>
+                        </ul>
+                    </div>
+
+                    <div class="project_card" style="grid-column: 1 / -1; max-width: 600px;">
+                        <div class="project_title"><a href="https://github.com/rrrinav/echo-chamber"
+                                target="_blank">Echo Chamber</a></div>
+                        <div class="tech_stack">Node.js, WebSockets, ReactJS</div>
+                        <ul class="bullet_list">
+                            <li>Developed a scalable full-stack messaging platform supporting global real-time chat,
+                                secure JWT authentication, and optimized media handling via Cloudinary.</li>
+                            <li>Engineered an event-driven Node.js backend using WebSockets for ultra-low-latency
+                                communication.</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <div class="sys_divider" aria-hidden="true">
+            <div class="node_tag mono">0x02</div>
+            <div class="trace_wrap">
+                <div class="trace_signal"></div>
+            </div>
+            <div class="node_tag mono">0x03</div>
+        </div>
+
+        <section id="skills" class="reveal">
+            <h2>Technical Stack</h2>
+            <div class="content_box">
+                <div class="skills_grid">
+                    <div class="skills_cat">Languages</div>
+                    <div class="skills_list">C, C++, Golang, Python, JavaScript, TypeScript, Java</div>
+
+                    <div class="skills_cat">Systems</div>
+                    <div class="skills_list">Memory Management, Metaprogramming, Linux io_uring, Compilers, Distributed
+                        Systems, WAL</div>
+
+                    <div class="skills_cat">Frameworks</div>
+                    <div class="skills_list">React.js, Express, Node.js, Zustand, TensorFlow, Raylib, Boost, Eigen,
+                        OpenCV, NumPy</div>
+
+                    <div class="skills_cat">Tools</div>
+                    <div class="skills_list">Linux, Fedora, Neovim, Wayland, Git, Docker, gRPC, WebSockets</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="sys_divider" aria-hidden="true">
+            <div class="node_tag mono">0x03</div>
+            <div class="trace_wrap">
+                <div class="trace_signal"></div>
+            </div>
+            <div class="node_tag mono">0x04</div>
+        </div>
+
+        <section id="telemetry" class="reveal">
+            <h2>Telemetry</h2>
+            <div class="content_box mono">
+                <div class="telemetry_board">
+                    <div class="t_col">
+                        <div class="t_header">NETWORK STATUS</div>
+                        <div id="git_stats">
+                            <div class="t_row"><span style="color: var(--text_muted)">Awaiting query...</span></div>
+                        </div>
+                    </div>
+                    <div class="t_col">
+                        <div class="t_header">RUNTIME COMPOSITION</div>
+                        <div id="git_langs">
+                            <div class="t_row"><span style="color: var(--text_muted)">Awaiting query...</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="sys_divider" aria-hidden="true">
+            <div class="node_tag mono">0x04</div>
+            <div class="trace_wrap">
+                <div class="trace_signal"></div>
+            </div>
+            <div class="node_tag mono">0xFF</div>
+        </div>
+
+        <!-- Dedicated Contact Section -->
+        <section id="contact" class="reveal">
+            <h2>Connection</h2>
+            <div class="contact_grid mono">
+                <a href="mailto:rinavhansa4@gmail.com" class="contact_link">
+                    <span>Email</span>
+                    <span>rinavhansa4@gmail.com</span>
+                </a>
+                <a href="https://github.com/rrrinav" target="_blank" class="contact_link">
+                    <span>GitHub</span>
+                    <span>/rrrinav</span>
+                </a>
+                <a href="https://www.linkedin.com/in/rinav-hansa-b0bb23291/" target="_blank" class="contact_link">
+                    <span>LinkedIn</span>
+                    <span>/rinav-hansa</span>
+                </a>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        /* parallax and spotlight logic */
+        const center_x = window.innerWidth / 2;
+        const center_y = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (e) => {
+            const delta_x = (e.clientX - center_x) / center_x;
+            const delta_y = (e.clientY - center_y) / center_y;
+
+            document.documentElement.style.setProperty('--px', delta_x);
+            document.documentElement.style.setProperty('--py', delta_y);
+
+            document.documentElement.style.setProperty('--mouse_x', `${e.clientX}px`);
+            document.documentElement.style.setProperty('--mouse_y', `${e.clientY}px`);
+        });
+
+        /* smooth scroll reveal */
+        const reveal_observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, {threshold: 0.1});
+        document.querySelectorAll('.reveal').forEach(el => reveal_observer.observe(el));
+
+        /* async telemetry module */
+        async function init_telemetry() {
+            try {
+                const user_res = await fetch('https://api.github.com/users/rrrinav');
+                if (!user_res.ok) throw new Error();
+                const user_data = await user_res.json();
+
+                document.getElementById('git_stats').innerHTML = `
+                    <div class="t_row"><span style="color: var(--text_muted)">public_repos</span><span>${user_data.public_repos}</span></div>
+                    <div class="t_row"><span style="color: var(--text_muted)">followers</span><span>${user_data.followers}</span></div>
+                `;
+
+                const repos_res = await fetch('https://api.github.com/users/rrrinav/repos?per_page=100');
+                const repos_data = await repos_res.json();
+                const lang_map = {};
+                repos_data.forEach(r => {if (r.language) lang_map[r.language] = (lang_map[r.language] || 0) + 1;});
+
+                const total_langs = Object.values(lang_map).reduce((a, b) => a + b, 0);
+                document.getElementById('git_langs').innerHTML = Object.entries(lang_map)
+                    .sort((a, b) => b[1] - a[1]).slice(0, 4)
+                    .map(([lang, count]) => `
+                        <div class="t_row">
+                            <span style="color: var(--text_muted)">${lang.toLowerCase()}</span>
+                            <span>${Math.round((count / total_langs) * 100)}%</span>
+                        </div>
+                    `).join('');
+            } catch (err) {
+                const err_html = '<div class="t_row"><span style="color: #ef4444">ERR: CONNECTION_REFUSED</span></div>';
+                document.getElementById('git_stats').innerHTML = err_html;
+                document.getElementById('git_langs').innerHTML = err_html;
+            }
+        }
+        init_telemetry();
+    </script>
+</body>
+
+</html>
