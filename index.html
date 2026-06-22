@@ -21,6 +21,8 @@
             --muted-mid: #8b949e;
             --frame-inset: 3.5rem;
             --frame-v: 3rem;
+            /* Content lives inside the frame lines with a little breathing room */
+            --content-pad: calc(var(--frame-inset) + 2rem);
         }
 
         *,
@@ -91,7 +93,7 @@
             height: 100vh;
             pointer-events: none;
             z-index: 9998;
-            background: radial-gradient(circle 480px at var(--mx, 50vw) var(--my, 50vh), rgba(255, 255, 255, 0.028), transparent 70%);
+            background: radial-gradient(circle 600px at var(--mx, 50vw) var(--my, 50vh), rgba(255, 255, 255, 0.025), transparent 70%);
         }
 
         .bg-grid {
@@ -106,21 +108,21 @@
                 linear-gradient(to right, var(--border-faint) 1px, transparent 1px),
                 linear-gradient(to bottom, var(--border-faint) 1px, transparent 1px);
             background-size: 48px 48px;
-            mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 20%, transparent 75%);
-            -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 20%, transparent 75%);
+            mask-image: radial-gradient(ellipse 90% 80% at 50% 35%, black 15%, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 35%, black 15%, transparent 75%);
         }
 
         .wm {
             position: fixed;
             font-weight: 900;
             font-family: 'Inter', sans-serif;
-            color: rgba(255, 255, 255, 0.015);
+            color: rgba(255, 255, 255, 0.013);
             pointer-events: none;
             user-select: none;
             z-index: -1;
-            font-size: 20vw;
+            font-size: 22vw;
             letter-spacing: -0.06em;
-            bottom: -3vw;
+            bottom: -4vw;
             right: -1vw;
         }
 
@@ -278,9 +280,8 @@
         }
 
         .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 8rem 3rem 8rem;
+            /* Edge-to-edge from frame line to frame line */
+            padding: 8rem var(--content-pad) 8rem;
         }
 
         .reveal {
@@ -297,7 +298,7 @@
         .hero {
             display: grid;
             grid-template-columns: 1fr auto;
-            gap: 3rem;
+            gap: 4rem;
             align-items: start;
         }
 
@@ -337,7 +338,7 @@
         }
 
         h1 {
-            font-size: clamp(3.8rem, 9.5vw, 8rem);
+            font-size: clamp(4rem, 8vw, 9rem);
             font-weight: 900;
             letter-spacing: -0.055em;
             line-height: 0.88;
@@ -349,17 +350,16 @@
             font-size: 1rem;
             font-weight: 300;
             color: var(--muted-mid);
-            max-width: 520px;
+            max-width: 580px;
             line-height: 1.8;
             border-left: 1px solid var(--border);
             padding-left: 1.4rem;
             font-style: italic;
         }
 
-        /* Photo placeholder */
         .hero-photo {
-            width: 180px;
-            height: 220px;
+            width: 200px;
+            height: 245px;
             border: 1px solid var(--border);
             background: rgba(255, 255, 255, 0.02);
             position: relative;
@@ -373,10 +373,9 @@
             object-fit: cover;
             object-position: center top;
             display: block;
-            filter: grayscale(30%) contrast(1.05);
+            filter: grayscale(25%) contrast(1.05);
         }
 
-        /* shown when no img present */
         .hero-photo .photo-placeholder {
             position: absolute;
             inset: 0;
@@ -411,7 +410,6 @@
             text-transform: uppercase;
         }
 
-        /* corner accents on photo */
         .hero-photo::before,
         .hero-photo::after {
             content: '';
@@ -420,7 +418,7 @@
             height: 12px;
             border: 1px solid var(--muted-mid);
             z-index: 1;
-            opacity: 0.4;
+            opacity: 0.45;
         }
 
         .hero-photo::before {
@@ -437,13 +435,12 @@
             border-top: none;
         }
 
-        /* Scan line over photo */
         .hero-photo .photo-scan {
             position: absolute;
             left: 0;
             right: 0;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
             animation: photo-scan 6s ease-in-out infinite;
             top: 0;
             z-index: 2;
@@ -477,7 +474,7 @@
             align-items: center;
             gap: 1.25rem;
             margin: 5rem 0;
-            opacity: 0.55;
+            opacity: 0.5;
         }
 
         .divider .tag {
@@ -500,30 +497,30 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 25%;
+            width: 20%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
-            transform: translateX(-300%);
-            animation: flow 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: translateX(-400%);
+            animation: flow 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
 
         .divider:nth-child(even) .signal {
-            animation-delay: 2s;
-            animation-duration: 5.5s;
+            animation-delay: 2.2s;
+            animation-duration: 6s;
         }
 
         @keyframes flow {
             0% {
-                transform: translateX(-300%);
+                transform: translateX(-400%);
             }
 
             100% {
-                transform: translateX(500%);
+                transform: translateX(600%);
             }
         }
 
         h2 {
-            font-size: 1.5rem;
+            font-size: 0.65rem;
             font-weight: 600;
             font-family: 'JetBrains Mono', monospace;
             letter-spacing: 0.22em;
@@ -537,7 +534,7 @@
 
         h2::before {
             content: '//';
-            color: var(--border);
+            color: rgba(255, 255, 255, 0.08);
             font-weight: 300;
         }
 
@@ -546,7 +543,6 @@
             flex: 1;
             height: 1px;
             background: var(--border-faint);
-            max-width: 100px;
         }
 
         .box {
@@ -590,16 +586,9 @@
 
         .box:hover::before,
         .box:hover::after {
-            border-color: rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.45);
         }
 
-        /*
-          Fixed 3-col layout. Cards share borders via outline trick:
-          the grid has no gap. Each card has border-right + border-bottom.
-          We remove border-right from cards in the last column via
-          explicit nth-child selectors (not auto-fit).
-          Echo Chamber (card 5) spans all 3 cols at desktop.
-        */
         .projects-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -608,31 +597,28 @@
         }
 
         .project-card {
-            padding: 1.75rem;
+            padding: 2rem;
             border-right: 1px solid var(--border-faint);
             border-bottom: 1px solid var(--border-faint);
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
+            gap: 0.85rem;
             transition: background 0.25s;
         }
 
         .project-card:hover {
-            background: rgba(255, 255, 255, 0.013);
+            background: rgba(255, 255, 255, 0.012);
         }
 
-        /* Remove right border from cards in column 3 */
         .project-card:nth-child(3n) {
             border-right: none;
         }
 
-        /* Echo Chamber spans full width — always remove right border */
         .project-card.full {
             border-right: none;
             grid-column: 1 / -1;
         }
 
-        /* Last row — remove bottom border */
         .project-card.last-row {
             border-bottom: none;
         }
@@ -645,7 +631,7 @@
         }
 
         .project-title {
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 700;
             letter-spacing: -0.02em;
             line-height: 1.25;
@@ -667,7 +653,7 @@
             color: var(--muted);
             letter-spacing: 0.03em;
             border-bottom: 1px solid var(--border-faint);
-            padding-bottom: 0.8rem;
+            padding-bottom: 0.85rem;
         }
 
         ul.pts {
@@ -680,7 +666,7 @@
 
         ul.pts li {
             color: var(--muted-mid);
-            font-size: 0.855rem;
+            font-size: 0.875rem;
             line-height: 1.6;
             padding-left: 1rem;
             position: relative;
@@ -691,33 +677,11 @@
             position: absolute;
             left: 0;
             color: var(--muted);
-            font-size: 0.85rem;
         }
 
-        .skills-table {
-            display: grid;
-            grid-template-columns: 120px 1fr;
-            row-gap: 0;
-            column-gap: 0;
-        }
-
-        .skills-row {
-            display: contents;
-            /* each row = cat + tags as grid children */
-        }
-
-        .skills-row-inner {
-            display: flex;
-            gap: 0;
-            border-bottom: 1px solid var(--border-faint);
-            grid-column: 1 / -1;
-            /* Actually use sub-grid approach: lay out cat and tags side by side */
-        }
-
-        /* Simpler: flat definition list style */
         .skills-dl {
             display: grid;
-            grid-template-columns: 120px 1fr;
+            grid-template-columns: 130px 1fr;
             border-top: 1px solid var(--border-faint);
         }
 
@@ -725,8 +689,6 @@
         .skills-dd {
             padding: 1.1rem 0;
             border-bottom: 1px solid var(--border-faint);
-            display: flex;
-            align-items: center;
         }
 
         .skills-dt {
@@ -737,30 +699,34 @@
             text-transform: uppercase;
             letter-spacing: 0.14em;
             padding-right: 1.5rem;
+            display: flex;
+            align-items: center;
         }
 
         .skills-dd {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.45rem;
+            align-items: center;
+            gap: 0.4rem;
             padding-left: 1.5rem;
             border-left: 1px solid var(--border-faint);
         }
 
         .skill-tag {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.68rem;
+            font-size: 0.67rem;
             color: var(--muted-mid);
-            background: rgba(255, 255, 255, 0.035);
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-faint);
-            padding: 0.2rem 0.6rem;
+            padding: 0.18rem 0.58rem;
             border-radius: 2px;
-            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            transition: background 0.18s, color 0.18s, border-color 0.18s;
             white-space: nowrap;
+            cursor: default;
         }
 
         .skill-tag:hover {
-            background: rgba(255, 255, 255, 0.065);
+            background: rgba(255, 255, 255, 0.07);
             color: var(--fg);
             border-color: var(--border);
         }
@@ -768,7 +734,7 @@
         .tel-board {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 3rem;
+            gap: 4rem;
         }
 
         .tel-header {
@@ -810,7 +776,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.55rem;
-            padding: 2rem 1.75rem;
+            padding: 2.25rem 2rem;
             border-right: 1px solid var(--border);
             text-decoration: none;
             color: var(--fg);
@@ -837,7 +803,7 @@
         }
 
         .contact-link:hover {
-            background: rgba(255, 255, 255, 0.022);
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .contact-link:hover::after {
@@ -854,15 +820,15 @@
         }
 
         .contact-value {
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             color: var(--fg);
             font-weight: 400;
         }
 
         .contact-arrow {
             position: absolute;
-            top: 1.75rem;
-            right: 1.75rem;
+            top: 2rem;
+            right: 2rem;
             font-size: 0.75rem;
             color: var(--muted);
             transition: transform 0.22s, color 0.22s;
@@ -873,16 +839,23 @@
             color: var(--fg);
         }
 
+        @media (max-width: 1100px) {
+            :root {
+                --frame-inset: 2rem;
+                --content-pad: calc(var(--frame-inset) + 1.5rem);
+            }
+        }
 
-        /* Tablet: 2-col projects, hero stacks */
-        @media (max-width: 1000px) {
+        @media (max-width: 900px) {
             :root {
                 --frame-inset: 1.5rem;
                 --frame-v: 2.5rem;
+                --content-pad: calc(var(--frame-inset) + 1.25rem);
             }
 
             .container {
-                padding: 7.5rem 2rem 7rem;
+                padding-top: 7rem;
+                padding-bottom: 6rem;
             }
 
             .hero {
@@ -891,8 +864,8 @@
             }
 
             .hero-photo {
-                width: 140px;
-                height: 170px;
+                width: 150px;
+                height: 185px;
             }
 
             /* 2-col projects */
@@ -900,7 +873,6 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            /* Reset 3n rule, set 2n rule */
             .project-card:nth-child(3n) {
                 border-right: 1px solid var(--border-faint);
             }
@@ -909,7 +881,6 @@
                 border-right: none;
             }
 
-            /* Full-width card still spans all */
             .project-card.full {
                 grid-column: 1 / -1;
                 border-right: none;
@@ -929,15 +900,16 @@
             }
         }
 
-        /* Mobile: 1-col everything */
-        @media (max-width: 640px) {
+        @media (max-width: 600px) {
             :root {
                 --frame-inset: 1rem;
                 --frame-v: 2rem;
+                --content-pad: 1.25rem;
             }
 
             .container {
-                padding: 6.5rem 1.25rem 5rem;
+                padding-top: 6.5rem;
+                padding-bottom: 5rem;
             }
 
             nav {
@@ -945,12 +917,13 @@
             }
 
             .nav-links a {
-                padding: 0.5rem 0.7rem;
-                letter-spacing: 0.1em;
+                padding: 0.5rem 0.65rem;
+                letter-spacing: 0.09em;
+                font-size: 0.6rem;
             }
 
             h1 {
-                font-size: clamp(3rem, 15vw, 5rem);
+                font-size: clamp(3rem, 14vw, 5rem);
             }
 
             .hero-photo {
@@ -958,7 +931,6 @@
                 height: 135px;
             }
 
-            /* 1-col projects — remove all right borders */
             .projects-grid {
                 grid-template-columns: 1fr;
             }
@@ -967,10 +939,7 @@
                 border-right: none;
             }
 
-            .project-card:nth-child(3n) {
-                border-right: none;
-            }
-
+            .project-card:nth-child(3n),
             .project-card:nth-child(2n) {
                 border-right: none;
             }
@@ -979,18 +948,17 @@
                 grid-column: 1;
             }
 
-            /* Skills: stack cat above tags */
             .skills-dl {
                 grid-template-columns: 1fr;
             }
 
             .skills-dt {
-                padding: 1rem 0 0.3rem;
+                padding: 0.9rem 0 0.25rem;
                 border-bottom: none;
             }
 
             .skills-dd {
-                padding: 0 0 1rem;
+                padding: 0 0 0.9rem;
                 border-left: none;
                 padding-left: 0;
                 border-bottom: 1px solid var(--border-faint);
@@ -1076,7 +1044,7 @@
                 </div>
 
                 <div class="hero-photo">
-                        <img src="photu.jpeg" alt="Rinav">
+                    <img src="photu.jpeg" alt="Rinav">
                     <div class="photo-placeholder">
                         <div class="ph-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
@@ -1300,19 +1268,16 @@
     </div>
 
     <script>
-        /* Spotlight */
         document.addEventListener('mousemove', e => {
             document.documentElement.style.setProperty('--mx', `${e.clientX}px`);
             document.documentElement.style.setProperty('--my', `${e.clientY}px`);
         });
 
-        /* Scroll reveal */
         const obs = new IntersectionObserver(entries => {
             entries.forEach(e => {if (e.isIntersecting) e.target.classList.add('visible');});
         }, {threshold: 0.06});
         document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-        /* Telemetry */
         async function initTelemetry() {
             try {
                 const uRes = await fetch('https://api.github.com/users/rrrinav');
