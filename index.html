@@ -8,47 +8,81 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,800;0,900;1,300&family=JetBrains+Mono:wght@300;400;500;700&display=swap"
         rel="stylesheet">
 
     <style>
         :root {
-            --bg_color: #030303;
-            --surface_color: #0a0a0a;
-            --border_color: rgba(255, 255, 255, 0.15);
-            --border_dim: rgba(255, 255, 255, 0.05);
-            --text_main: #f8fafc;
-            --text_muted: #8b949e;
-            --accent: #ffffff;
-            --spotlight: rgba(255, 255, 255, 0.04);
+            --bg: #040404;
+            --border: rgba(255, 255, 255, 0.11);
+            --border-faint: rgba(255, 255, 255, 0.042);
+            --fg: #f0f2f5;
+            --muted: #5a6370;
+            --muted-mid: #8b949e;
+            --frame-inset: 3.5rem;
+            --frame-v: 3rem;
         }
 
-        * {
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
-        body,
         html {
-            background-color: var(--bg_color);
-            color: var(--text_main);
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            overflow-x: hidden;
             scroll-behavior: smooth;
         }
 
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
         ::selection {
-            background: var(--text_main);
-            color: var(--bg_color);
+            background: var(--fg);
+            color: var(--bg);
         }
 
         .mono {
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* background layers */
+        #scan-intro {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.55) 40%, rgba(255, 255, 255, 0.85) 50%, rgba(255, 255, 255, 0.55) 60%, transparent 100%);
+            z-index: 99999;
+            pointer-events: none;
+            animation: scan-sweep 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation-delay: 0.1s;
+            opacity: 0;
+        }
+
+        @keyframes scan-sweep {
+            0% {
+                top: 0;
+                opacity: 1;
+            }
+
+            85% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100vh;
+                opacity: 0;
+            }
+        }
+
         #spotlight {
             position: fixed;
             top: 0;
@@ -56,11 +90,11 @@
             width: 100vw;
             height: 100vh;
             pointer-events: none;
-            z-index: 9999;
-            background: radial-gradient(circle 600px at var(--mouse_x, 50vw) var(--mouse_y, 50vh), var(--spotlight), transparent 80%);
+            z-index: 9998;
+            background: radial-gradient(circle 480px at var(--mx, 50vw) var(--my, 50vh), rgba(255, 255, 255, 0.028), transparent 70%);
         }
 
-        .bg_grid {
+        .bg-grid {
             position: fixed;
             top: 0;
             left: 0;
@@ -69,68 +103,57 @@
             pointer-events: none;
             z-index: -3;
             background-image:
-                linear-gradient(to right, var(--border_dim) 1px, transparent 1px),
-                linear-gradient(to bottom, var(--border_dim) 1px, transparent 1px);
-            background-size: 40px 40px;
-            mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
-            -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+                linear-gradient(to right, var(--border-faint) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--border-faint) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 20%, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 20%, transparent 75%);
         }
 
-        .watermark {
+        .wm {
             position: fixed;
             font-weight: 900;
-            font-size: 18vw;
+            font-family: 'Inter', sans-serif;
             color: rgba(255, 255, 255, 0.015);
-            z-index: -2;
             pointer-events: none;
-            white-space: nowrap;
             user-select: none;
-            letter-spacing: -0.05em;
+            z-index: -1;
+            font-size: 20vw;
+            letter-spacing: -0.06em;
+            bottom: -3vw;
+            right: -1vw;
         }
 
-        .wm_1 {
-            top: 10%;
-            left: -5%;
-            transform: rotate(-90deg) translateY(-50%);
-        }
-
-        .wm_2 {
-            bottom: -5%;
-            right: -2%;
-            font-size: 12vw;
-        }
-
-        /* overlapping schematic grid lines (outermost border) */
-        .grid_line {
+        .frame-line {
             position: fixed;
-            background: var(--border_color);
-            z-index: 9998;
+            background: var(--border);
             pointer-events: none;
+            z-index: 9997;
         }
 
-        .line_h_top {
-            top: 3rem;
+        .fl-top {
+            top: var(--frame-v);
             left: 0;
             right: 0;
             height: 1px;
         }
 
-        .line_h_bot {
-            bottom: 3rem;
+        .fl-bottom {
+            bottom: var(--frame-v);
             left: 0;
             right: 0;
             height: 1px;
         }
 
-        .line_v_left {
-            left: 4rem;
+        .fl-left {
+            left: var(--frame-inset);
             top: 0;
             bottom: 0;
             width: 1px;
         }
 
-        .line_v_right {
-            right: 4rem;
+        .fl-right {
+            right: var(--frame-inset);
             top: 0;
             bottom: 0;
             width: 1px;
@@ -140,120 +163,76 @@
             position: fixed;
             width: 5px;
             height: 5px;
-            background: var(--bg_color);
-            border: 1px solid var(--text_main);
+            background: var(--bg);
+            border: 1px solid var(--fg);
+            pointer-events: none;
             z-index: 9999;
+        }
+
+        .n-tl {
+            top: var(--frame-v);
+            left: var(--frame-inset);
             transform: translate(-50%, -50%);
-            pointer-events: none;
         }
 
-        .node_tl {
-            top: 3rem;
-            left: 4rem;
+        .n-tr {
+            top: var(--frame-v);
+            right: var(--frame-inset);
+            transform: translate(50%, -50%);
         }
 
-        .node_tr {
-            top: 3rem;
-            right: 4rem;
+        .n-bl {
+            bottom: var(--frame-v);
+            left: var(--frame-inset);
+            transform: translate(-50%, 50%);
         }
 
-        .node_bl {
-            bottom: 3rem;
-            left: 4rem;
+        .n-br {
+            bottom: var(--frame-v);
+            right: var(--frame-inset);
+            transform: translate(50%, 50%);
         }
 
-        .node_br {
-            bottom: 3rem;
-            right: 4rem;
-        }
-
-        /* layered parallax hud frames */
-        .hud_layer {
-            position: fixed;
-            pointer-events: none;
-            z-index: 9997;
-            transition: transform 0.1s ease-out;
-        }
-
-        .frame_beta {
-            top: 4.5rem;
-            bottom: 4.5rem;
-            left: 5.5rem;
-            right: 5.5rem;
-            border: 1px dashed var(--border_dim);
-            transform: translate(calc(var(--px, 0) * 3px), calc(var(--py, 0) * 3px));
-        }
-
-        .frame_gamma {
-            top: 6rem;
-            bottom: 6rem;
-            left: 7rem;
-            right: 7rem;
-            transform: translate(calc(var(--px, 0) * 8px), calc(var(--py, 0) * 8px));
-        }
-
-        .frame_gamma::before,
-        .frame_gamma::after {
-            content: '';
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--text_muted);
-            opacity: 0.2;
-        }
-
-        .frame_gamma::before {
-            top: 0;
-            left: 0;
-            border-right: none;
-            border-bottom: none;
-        }
-
-        .frame_gamma::after {
-            bottom: 0;
-            right: 0;
-            border-left: none;
-            border-top: none;
-        }
-
-        /* tactical navbar */
         nav {
             position: fixed;
-            top: 1rem;
+            top: calc(var(--frame-v) - 1.35rem);
             left: 50%;
-            transform: translateX(calc(-50% + var(--px, 0) * 3px)) translateY(calc(var(--py, 0) * 3px));
+            transform: translateX(-50%);
             z-index: 9999;
             display: flex;
-            align-items: center;
-            background: rgba(5, 5, 5, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid var(--border_color);
-            padding: 0.5rem 1rem;
-            gap: 2rem;
+            align-items: stretch;
+            gap: 0;
+            background: rgba(4, 4, 4, 0.94);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--border);
             border-radius: 2px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: transform 0.1s ease-out;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
-        .nav_module_id {
-            font-size: 0.65rem;
-            color: var(--text_muted);
-            letter-spacing: 0.2em;
-            padding-right: 1.5rem;
-            border-right: 1px dotted var(--border_color);
+        .nav-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.63rem;
+            font-weight: 500;
+            color: var(--muted);
+            letter-spacing: 0.18em;
+            padding: 0.55rem 1.2rem;
+            border-right: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.55rem;
+            text-transform: uppercase;
         }
 
-        .nav_module_id::before {
+        .nav-id::before {
             content: '';
-            display: block;
-            width: 6px;
-            height: 6px;
-            background: var(--text_main);
-            animation: pulse 2s infinite;
+            width: 5px;
+            height: 5px;
+            background: var(--fg);
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: pulse 2.4s ease-in-out infinite;
         }
 
         @keyframes pulse {
@@ -261,151 +240,94 @@
             0%,
             100% {
                 opacity: 1;
+                transform: scale(1);
             }
 
             50% {
-                opacity: 0.3;
+                opacity: 0.2;
+                transform: scale(0.65);
             }
         }
 
-        .nav_links {
+        .nav-links {
             display: flex;
-            gap: 1.5rem;
         }
 
-        .nav_links a {
-            color: var(--text_muted);
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            color: var(--muted);
             text-decoration: none;
-            font-size: 0.75rem;
-            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.63rem;
+            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.15em;
-            transition: all 0.2s ease;
-            padding: 0.2rem 0.5rem;
-            position: relative;
+            padding: 0.55rem 1rem;
+            border-right: 1px solid var(--border);
+            transition: color 0.18s, background 0.18s;
         }
 
-        .nav_links a:hover {
-            color: var(--text_main);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .nav_links a::before,
-        .nav_links a::after {
-            content: '';
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            border: 1px solid transparent;
-            transition: border-color 0.2s;
-        }
-
-        .nav_links a::before {
-            top: 0;
-            left: 0;
+        .nav-links a:last-child {
             border-right: none;
-            border-bottom: none;
         }
 
-        .nav_links a::after {
-            bottom: 0;
-            right: 0;
-            border-left: none;
-            border-top: none;
+        .nav-links a:hover {
+            color: var(--fg);
+            background: rgba(255, 255, 255, 0.04);
         }
 
-        .nav_links a:hover::before,
-        .nav_links a:hover::after {
-            border-color: var(--text_main);
-        }
-
-        /* layout */
         .container {
-            max-width: calc(100vw - 8rem);
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 8rem 4rem 8rem 4rem;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            z-index: 1;
+            padding: 8rem 3rem 8rem;
         }
 
-        /* animated data bus dividers */
-        .sys_divider {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            margin: 4rem 0;
-            opacity: 0.7;
+        .reveal {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .sys_divider .node_tag {
-            font-size: 0.65rem;
-            color: var(--text_muted);
-            letter-spacing: 0.2em;
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .sys_divider .trace_wrap {
-            flex: 1;
-            height: 1px;
-            position: relative;
-            overflow: hidden;
-            background: repeating-linear-gradient(90deg, var(--border_color) 0, var(--border_color) 6px, transparent 6px, transparent 12px);
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 3rem;
+            align-items: start;
         }
 
-        .sys_divider .trace_signal {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, var(--text_main), transparent);
-            transform: translateX(-100%);
-            animation: data_flow 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        .hero-text {
+            min-width: 0;
         }
 
-        .sys_divider:nth-child(even) .trace_signal {
-            animation-delay: 1.5s;
-            animation-duration: 4.5s;
-            animation-direction: reverse;
-        }
-
-        @keyframes data_flow {
-            0% {
-                transform: translateX(-100%);
-            }
-
-            100% {
-                transform: translateX(100%);
-            }
-        }
-
-        /* typography and sections */
-        header {
-            margin-bottom: 2rem;
-            position: relative;
-        }
-
-        .sys_init {
-            font-size: 0.85rem;
-            color: var(--text_muted);
+        .sys-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            font-weight: 400;
+            color: var(--muted);
+            letter-spacing: 0.22em;
             text-transform: uppercase;
-            letter-spacing: 0.15em;
-            margin-bottom: 2rem;
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.9rem;
+            margin-bottom: 2.25rem;
         }
 
-        .sys_init::before {
+        .sys-label::before {
             content: '';
-            width: 40px;
+            display: block;
+            width: 28px;
             height: 1px;
-            background: var(--text_muted);
+            background: var(--muted);
         }
 
         .blink {
-            animation: blink 1s step-end infinite;
+            animation: blink 1.1s step-end infinite;
         }
 
         @keyframes blink {
@@ -415,319 +337,701 @@
         }
 
         h1 {
-            font-size: clamp(3.5rem, 9vw, 7rem);
+            font-size: clamp(3.8rem, 9.5vw, 8rem);
             font-weight: 900;
-            letter-spacing: -0.05em;
-            line-height: 0.9;
-            margin-bottom: 2rem;
-            display: inline-block;
+            letter-spacing: -0.055em;
+            line-height: 0.88;
+            margin-bottom: 2.5rem;
+            color: var(--fg);
         }
 
         .subtitle {
-            font-size: 1.15rem;
-            color: var(--text_muted);
-            max-width: 650px;
-            line-height: 1.7;
-            border-left: 2px dashed var(--border_color);
-            padding-left: 1.5rem;
+            font-size: 1rem;
+            font-weight: 300;
+            color: var(--muted-mid);
+            max-width: 520px;
+            line-height: 1.8;
+            border-left: 1px solid var(--border);
+            padding-left: 1.4rem;
+            font-style: italic;
         }
 
-        section {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        /* Photo placeholder */
+        .hero-photo {
+            width: 180px;
+            height: 220px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.02);
+            position: relative;
+            flex-shrink: 0;
+            overflow: hidden;
         }
 
-        section.visible {
-            opacity: 1;
-            transform: translateY(0);
+        .hero-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            display: block;
+            filter: grayscale(30%) contrast(1.05);
         }
 
-        h2 {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            margin-bottom: 2rem;
-            display: inline-flex;
+        /* shown when no img present */
+        .hero-photo .photo-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 1rem;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .hero-photo .photo-placeholder .ph-icon {
+            width: 48px;
+            height: 48px;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-photo .photo-placeholder .ph-icon svg {
+            width: 22px;
+            height: 22px;
+            opacity: 0.25;
+        }
+
+        .hero-photo .photo-placeholder .ph-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
+            color: var(--muted);
+            letter-spacing: 0.18em;
             text-transform: uppercase;
         }
 
-        h2::before {
-            content: '//';
-            color: var(--text_muted);
-            font-weight: 400;
-            font-family: monospace;
-        }
-
-        /* content box for sections */
-        .content_box {
-            border: 1px dashed var(--border_color);
-            background: rgba(10, 10, 10, 0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            padding: 3rem;
-            position: relative;
-            transition: border-color 0.3s ease;
-        }
-
-        .content_box::before,
-        .content_box::after {
+        /* corner accents on photo */
+        .hero-photo::before,
+        .hero-photo::after {
             content: '';
             position: absolute;
             width: 12px;
             height: 12px;
-            border: 1px solid var(--text_muted);
-            transition: all 0.3s;
+            border: 1px solid var(--muted-mid);
+            z-index: 1;
+            opacity: 0.4;
         }
 
-        .content_box::before {
+        .hero-photo::before {
+            top: 0;
+            left: 0;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .hero-photo::after {
+            bottom: 0;
+            right: 0;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Scan line over photo */
+        .hero-photo .photo-scan {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            animation: photo-scan 6s ease-in-out infinite;
+            top: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        @keyframes photo-scan {
+
+            0%,
+            100% {
+                top: 0;
+                opacity: 0;
+            }
+
+            5% {
+                opacity: 1;
+            }
+
+            95% {
+                opacity: 1;
+            }
+
+            to {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            margin: 5rem 0;
+            opacity: 0.55;
+        }
+
+        .divider .tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.58rem;
+            color: var(--muted);
+            letter-spacing: 0.2em;
+            white-space: nowrap;
+        }
+
+        .divider .trace {
+            flex: 1;
+            height: 1px;
+            position: relative;
+            overflow: hidden;
+            background: repeating-linear-gradient(90deg, var(--border) 0, var(--border) 4px, transparent 4px, transparent 10px);
+        }
+
+        .divider .signal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 25%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+            transform: translateX(-300%);
+            animation: flow 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .divider:nth-child(even) .signal {
+            animation-delay: 2s;
+            animation-duration: 5.5s;
+        }
+
+        @keyframes flow {
+            0% {
+                transform: translateX(-300%);
+            }
+
+            100% {
+                transform: translateX(500%);
+            }
+        }
+
+        h2 {
+            font-size: 0.65rem;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+        }
+
+        h2::before {
+            content: '//';
+            color: var(--border);
+            font-weight: 300;
+        }
+
+        h2::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-faint);
+            max-width: 100px;
+        }
+
+        .box {
+            border: 1px solid var(--border);
+            background: rgba(7, 7, 7, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 2.5rem;
+            position: relative;
+            transition: border-color 0.3s;
+        }
+
+        .box::before,
+        .box::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border: 1px solid var(--muted);
+            transition: border-color 0.3s;
+            z-index: 1;
+        }
+
+        .box::before {
             top: -1px;
             left: -1px;
             border-right: none;
             border-bottom: none;
         }
 
-        .content_box::after {
+        .box::after {
             bottom: -1px;
             right: -1px;
             border-left: none;
             border-top: none;
         }
 
-        .content_box:hover {
-            border-color: rgba(255, 255, 255, 0.3);
+        .box:hover {
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* grids and cards */
-        .projects_grid {
+        .box:hover::before,
+        .box:hover::after {
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /*
+          Fixed 3-col layout. Cards share borders via outline trick:
+          the grid has no gap. Each card has border-right + border-bottom.
+          We remove border-right from cards in the last column via
+          explicit nth-child selectors (not auto-fit).
+          Echo Chamber (card 5) spans all 3 cols at desktop.
+        */
+        .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            border: 1px solid var(--border-faint);
+        }
+
+        .project-card {
+            padding: 1.75rem;
+            border-right: 1px solid var(--border-faint);
+            border-bottom: 1px solid var(--border-faint);
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            transition: background 0.25s;
+        }
+
+        .project-card:hover {
+            background: rgba(255, 255, 255, 0.013);
+        }
+
+        /* Remove right border from cards in column 3 */
+        .project-card:nth-child(3n) {
+            border-right: none;
+        }
+
+        /* Echo Chamber spans full width — always remove right border */
+        .project-card.full {
+            border-right: none;
+            grid-column: 1 / -1;
+        }
+
+        /* Last row — remove bottom border */
+        .project-card.last-row {
+            border-bottom: none;
+        }
+
+        .project-index {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.56rem;
+            color: var(--muted);
+            letter-spacing: 0.2em;
+        }
+
+        .project-title {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.25;
+        }
+
+        .project-title a {
+            color: var(--fg);
+            text-decoration: none;
+            transition: color 0.18s;
+        }
+
+        .project-title a:hover {
+            color: var(--muted-mid);
+        }
+
+        .tech-stack {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--muted);
+            letter-spacing: 0.03em;
+            border-bottom: 1px solid var(--border-faint);
+            padding-bottom: 0.8rem;
+        }
+
+        ul.pts {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+        }
+
+        ul.pts li {
+            color: var(--muted-mid);
+            font-size: 0.855rem;
+            line-height: 1.6;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        ul.pts li::before {
+            content: '›';
+            position: absolute;
+            left: 0;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        .skills-table {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            row-gap: 0;
+            column-gap: 0;
+        }
+
+        .skills-row {
+            display: contents;
+            /* each row = cat + tags as grid children */
+        }
+
+        .skills-row-inner {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--border-faint);
+            grid-column: 1 / -1;
+            /* Actually use sub-grid approach: lay out cat and tags side by side */
+        }
+
+        /* Simpler: flat definition list style */
+        .skills-dl {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            border-top: 1px solid var(--border-faint);
+        }
+
+        .skills-dt,
+        .skills-dd {
+            padding: 1.1rem 0;
+            border-bottom: 1px solid var(--border-faint);
+            display: flex;
+            align-items: center;
+        }
+
+        .skills-dt {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            padding-right: 1.5rem;
+        }
+
+        .skills-dd {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            padding-left: 1.5rem;
+            border-left: 1px solid var(--border-faint);
+        }
+
+        .skill-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            color: var(--muted-mid);
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--border-faint);
+            padding: 0.2rem 0.6rem;
+            border-radius: 2px;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            white-space: nowrap;
+        }
+
+        .skill-tag:hover {
+            background: rgba(255, 255, 255, 0.065);
+            color: var(--fg);
+            border-color: var(--border);
+        }
+
+        .tel-board {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 3rem;
         }
 
-        .project_card {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            position: relative;
-        }
-
-        .project_title {
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
-
-        .project_title a {
-            color: var(--text_main);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .project_title a:hover {
-            color: var(--text_muted);
-        }
-
-        .tech_stack {
+        .tel-header {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--text_muted);
-            letter-spacing: 0.05em;
-        }
-
-        ul.bullet_list {
-            list-style: none;
-            margin-top: 0.5rem;
-            margin-left: 1rem;
-        }
-
-        ul.bullet_list li {
-            position: relative;
-            color: var(--text_muted);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 0.75rem;
-        }
-
-        ul.bullet_list li::before {
-            content: '>';
-            position: absolute;
-            left: -1.2rem;
-            color: var(--border_color);
-            font-family: monospace;
-        }
-
-        /* skills layout */
-        .skills_grid {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 2rem 3rem;
-            align-items: baseline;
-        }
-
-        @media (max-width: 768px) {
-            .skills_grid {
-                grid-template-columns: 1fr;
-                gap: 0.5rem 1.5rem;
-            }
-
-            .skills_cat {
-                margin-top: 1rem;
-            }
-        }
-
-        .skills_cat {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: var(--text_main);
+            font-size: 0.58rem;
+            letter-spacing: 0.22em;
+            color: var(--muted);
             text-transform: uppercase;
+            border-bottom: 1px solid var(--border-faint);
+            padding-bottom: 0.8rem;
+            margin-bottom: 1.4rem;
         }
 
-        .skills_list {
-            color: var(--text_muted);
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        /* telemetry board */
-        .telemetry_board {
-            display: flex;
-            gap: 4rem;
-            flex-wrap: wrap;
-        }
-
-        .t_col {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .t_header {
-            font-size: 0.75rem;
-            color: var(--text_muted);
-            margin-bottom: 2rem;
-            letter-spacing: 0.2em;
-            border-bottom: 1px dashed var(--border_color);
-            padding-bottom: 1rem;
-        }
-
-        .t_row {
+        .t-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 1.25rem;
-            font-size: 0.85rem;
+            align-items: baseline;
+            margin-bottom: 0.9rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
         }
 
-        /* contact links */
-        .contact_grid {
+        .t-row .t-key {
+            color: var(--muted);
+        }
+
+        .t-row .t-val {
+            color: var(--fg);
+        }
+
+        .contact-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            border: 1px solid var(--border);
         }
 
-        .contact_link {
+        .contact-link {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
-            padding: 2rem;
-            border: 1px dashed var(--border_color);
+            gap: 0.55rem;
+            padding: 2rem 1.75rem;
+            border-right: 1px solid var(--border);
             text-decoration: none;
-            color: var(--text_main);
-            transition: all 0.3s ease;
+            color: var(--fg);
             position: relative;
             overflow: hidden;
-            background: rgba(10, 10, 10, 0.6);
-            backdrop-filter: blur(8px);
+            transition: background 0.25s;
         }
 
-        .contact_link::before {
+        .contact-link:last-child {
+            border-right: none;
+        }
+
+        .contact-link::after {
             content: '';
             position: absolute;
-            top: 0;
+            bottom: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: var(--text_main);
-            transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: -1;
+            height: 1px;
+            background: var(--fg);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .contact_link:hover {
-            color: var(--bg_color);
-            border-style: solid;
-            border-color: var(--text_main);
+        .contact-link:hover {
+            background: rgba(255, 255, 255, 0.022);
         }
 
-        .contact_link:hover::before {
-            transform: translateY(0);
+        .contact-link:hover::after {
+            transform: scaleX(1);
         }
 
-        .contact_link span:first-child {
-            font-size: 0.75rem;
+        .contact-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.58rem;
+            font-weight: 500;
+            color: var(--muted);
+            letter-spacing: 0.22em;
             text-transform: uppercase;
-            letter-spacing: 0.15em;
-            font-weight: 700;
-            transition: color 0.3s;
         }
 
-        .contact_link:hover span:first-child {
-            color: var(--bg_color);
-            opacity: 0.7;
+        .contact-value {
+            font-size: 0.875rem;
+            color: var(--fg);
+            font-weight: 400;
         }
 
+        .contact-arrow {
+            position: absolute;
+            top: 1.75rem;
+            right: 1.75rem;
+            font-size: 0.75rem;
+            color: var(--muted);
+            transition: transform 0.22s, color 0.22s;
+        }
+
+        .contact-link:hover .contact-arrow {
+            transform: translate(3px, -3px);
+            color: var(--fg);
+        }
+
+
+        /* Tablet: 2-col projects, hero stacks */
         @media (max-width: 1000px) {
-            .line_v_left {
-                left: 1.5rem;
+            :root {
+                --frame-inset: 1.5rem;
+                --frame-v: 2.5rem;
             }
 
-            .line_v_right {
-                right: 1.5rem;
+            .container {
+                padding: 7.5rem 2rem 7rem;
             }
 
-            .node_tl {
-                left: 1.5rem;
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
             }
 
-            .node_tr {
-                right: 1.5rem;
+            .hero-photo {
+                width: 140px;
+                height: 170px;
             }
 
-            .node_bl {
-                left: 1.5rem;
+            /* 2-col projects */
+            .projects-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
 
-            .node_br {
-                right: 1.5rem;
+            /* Reset 3n rule, set 2n rule */
+            .project-card:nth-child(3n) {
+                border-right: 1px solid var(--border-faint);
             }
 
-            .frame_beta,
-            .frame_gamma {
+            .project-card:nth-child(2n) {
+                border-right: none;
+            }
+
+            /* Full-width card still spans all */
+            .project-card.full {
+                grid-column: 1 / -1;
+                border-right: none;
+            }
+
+            .tel-board {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .nav-id {
                 display: none;
             }
 
             nav {
-                width: 90%;
-                justify-content: center;
-                top: 1rem;
+                max-width: calc(100% - 4rem);
             }
+        }
 
-            .nav_module_id {
-                display: none;
+        /* Mobile: 1-col everything */
+        @media (max-width: 640px) {
+            :root {
+                --frame-inset: 1rem;
+                --frame-v: 2rem;
             }
 
             .container {
-                max-width: calc(100vw - 3rem);
-                padding: 6rem 1rem;
+                padding: 6.5rem 1.25rem 5rem;
             }
 
-            .content_box {
-                padding: 2rem;
+            nav {
+                max-width: calc(100% - 2.5rem);
             }
 
-            .telemetry_board {
-                flex-direction: column;
-                gap: 2rem;
+            .nav-links a {
+                padding: 0.5rem 0.7rem;
+                letter-spacing: 0.1em;
+            }
+
+            h1 {
+                font-size: clamp(3rem, 15vw, 5rem);
+            }
+
+            .hero-photo {
+                width: 110px;
+                height: 135px;
+            }
+
+            /* 1-col projects — remove all right borders */
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .project-card {
+                border-right: none;
+            }
+
+            .project-card:nth-child(3n) {
+                border-right: none;
+            }
+
+            .project-card:nth-child(2n) {
+                border-right: none;
+            }
+
+            .project-card.full {
+                grid-column: 1;
+            }
+
+            /* Skills: stack cat above tags */
+            .skills-dl {
+                grid-template-columns: 1fr;
+            }
+
+            .skills-dt {
+                padding: 1rem 0 0.3rem;
+                border-bottom: none;
+            }
+
+            .skills-dd {
+                padding: 0 0 1rem;
+                border-left: none;
+                padding-left: 0;
+                border-bottom: 1px solid var(--border-faint);
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-link {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .contact-link:last-child {
+                border-bottom: none;
+            }
+
+            .box {
+                padding: 1.5rem;
+            }
+
+            .divider {
+                margin: 3.5rem 0;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #scan-intro {
+                display: none;
+            }
+
+            .reveal {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+
+            .divider .signal,
+            .hero-photo .photo-scan {
+                animation: none;
             }
         }
     </style>
@@ -735,32 +1039,24 @@
 
 <body>
 
-    <!-- outer grid bounding box -->
-    <div class="grid_line line_h_top"></div>
-    <div class="grid_line line_h_bot"></div>
-    <div class="grid_line line_v_left"></div>
-    <div class="grid_line line_v_right"></div>
-
-    <!-- grid intersection nodes -->
-    <div class="node node_tl"></div>
-    <div class="node node_tr"></div>
-    <div class="node node_bl"></div>
-    <div class="node node_br"></div>
-
-    <!-- multi depth hud frames -->
-    <div class="hud_layer frame_beta"></div>
-    <div class="hud_layer frame_gamma"></div>
-
-    <!-- ambient layers -->
+    <div id="scan-intro"></div>
     <div id="spotlight"></div>
-    <div class="bg_grid"></div>
-    <div class="watermark wm_1">0x8FA3</div>
-    <div class="watermark mono wm_2">SYS_CORE</div>
+    <div class="bg-grid"></div>
+    <div class="wm">SYS_CORE</div>
 
-    <!-- tactical navbar -->
-    <nav class="mono">
-        <div class="nav_module_id">rrrinav</div>
-        <div class="nav_links">
+    <div class="frame-line fl-top"></div>
+    <div class="frame-line fl-bottom"></div>
+    <div class="frame-line fl-left"></div>
+    <div class="frame-line fl-right"></div>
+
+    <div class="node n-tl"></div>
+    <div class="node n-tr"></div>
+    <div class="node n-bl"></div>
+    <div class="node n-br"></div>
+
+    <nav>
+        <div class="nav-id">rrrinav</div>
+        <div class="nav-links">
             <a href="#about">Init</a>
             <a href="#projects">Projects</a>
             <a href="#skills">Tech-stack</a>
@@ -768,180 +1064,235 @@
         </div>
     </nav>
 
-    <!-- content payload -->
     <div class="container">
 
         <header id="about" class="reveal">
-            <div class="sys_init mono">status == online <span class="blink">_</span></div>
-            <h1>RINAV</h1>
-            <p class="subtitle">Extracting maximum performance from modern hardware. Building zero-dependency
-                infrastructure and low-level infrastructure in modern c++.</p>
+            <div class="hero">
+                <div class="hero-text">
+                    <div class="sys-label">status == online <span class="blink">_</span></div>
+                    <h1>RINAV</h1>
+                    <p class="subtitle">Extracting maximum performance from modern hardware. Building zero-dependency
+                        and low-level infrastructure in modern c++.</p>
+                </div>
+
+                <div class="hero-photo">
+                        <img src="photu.jpeg" alt="Rinav">
+                    <div class="photo-placeholder">
+                        <div class="ph-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </div>
+                        <span class="ph-label">Photo</span>
+                    </div>
+                    <div class="photo-scan"></div>
+                </div>
+            </div>
         </header>
 
-        <div class="sys_divider" aria-hidden="true">
-            <div class="node_tag mono">0x01</div>
-            <div class="trace_wrap">
-                <div class="trace_signal"></div>
+        <div class="divider" aria-hidden="true">
+            <div class="tag mono">0x01</div>
+            <div class="trace">
+                <div class="signal"></div>
             </div>
-            <div class="node_tag mono">0x02</div>
+            <div class="tag mono">0x02</div>
         </div>
 
         <section id="projects" class="reveal">
             <h2>Projects</h2>
-            <div class="content_box">
-                <div class="projects_grid">
+            <div class="projects-grid">
 
-                    <div class="project_card">
-                        <div class="project_title"><a href="https://github.com/rrrinav/Phos" target="_blank">Phos
-                                Compiler</a></div>
-                        <div class="tech_stack">C++23, Compilers, Language Design</div>
-                        <ul class="bullet_list">
-                            <li>Designed and developed a statically-typed programming language from scratch, building a
-                                custom lexer, recursive descent parser, and AST-walking interpreter.</li>
-                            <li>Engineered a robust type checker enforcing strict null-safety and implemented a highly
-                                optimized, non-atomic reference-counting smart pointer.</li>
-                            <li>Wrote a custom arena allocator to drastically reduce memory fragmentation and improve
-                                allocation speeds.</li>
-                        </ul>
-                    </div>
-
-                    <div class="project_card">
-                        <div class="project_title"><a href="https://github.com/rrrinav/rio" target="_blank">Rio: Async
-                                I/O</a></div>
-                        <div class="tech_stack">C++23, C++20 Modules, io_uring</div>
-                        <ul class="bullet_list">
-                            <li>Engineered a zero-cost, asynchronous I/O and networking framework in C++23 utilizing
-                                Linux's io_uring to achieve high-throughput, non-blocking socket operations.</li>
-                            <li>Architected a zero-allocation Future library using advanced template metaprogramming and
-                                C++20 modules to enable seamless async pipeline composition.</li>
-                            <li>Guaranteed strict memory safety and lock-free task cancellation by designing a custom
-                                heap-detach pattern.</li>
-                        </ul>
-                    </div>
-
-                    <div class="project_card">
-                        <div class="project_title"><a href="https://github.com/rrrinav/rivage" target="_blank">Rivage:
-                                Map-Reduce</a></div>
-                        <div class="tech_stack">Golang, gRPC, Distributed Systems</div>
-                        <ul class="bullet_list">
-                            <li>Architected a zero-dependency distributed Map-Reduce computation engine in Golang,
-                                utilizing gRPC for highly concurrent, low-latency cross-node remote procedure calls.
-                            </li>
-                            <li>Designed robust worker nodes for parallel data processing, achieving fault tolerance and
-                                seamless client-server state synchronization.</li>
-                            <li>Implemented a custom Write-Ahead Logging (WAL) mechanism to ensure strict data
-                                durability and system recovery.</li>
-                        </ul>
-                    </div>
-
-                    <div class="project_card">
-                        <div class="project_title"><a href="https://github.com/Rrrinav/Dal-Monitoring"
-                                target="_blank">Drone Surveillance</a></div>
-                        <div class="tech_stack">Computer Vision, Edge Inference</div>
-                        <ul class="bullet_list">
-                            <li>Built an autonomous UAV system to detect and geographically map floating lake trash
-                                using a custom semantic segmentation model.</li>
-                            <li>Integrated a real-time aerial image capture and inference pipeline on edge hardware to
-                                generate dynamic pollution heatmaps.</li>
-                        </ul>
-                    </div>
-
-                    <div class="project_card" style="grid-column: 1 / -1; max-width: 600px;">
-                        <div class="project_title"><a href="https://github.com/rrrinav/echo-chamber"
-                                target="_blank">Echo Chamber</a></div>
-                        <div class="tech_stack">Node.js, WebSockets, ReactJS</div>
-                        <ul class="bullet_list">
-                            <li>Developed a scalable full-stack messaging platform supporting global real-time chat,
-                                secure JWT authentication, and optimized media handling via Cloudinary.</li>
-                            <li>Engineered an event-driven Node.js backend using WebSockets for ultra-low-latency
-                                communication.</li>
-                        </ul>
-                    </div>
-
+                <div class="project-card">
+                    <div class="project-index mono">01</div>
+                    <div class="project-title"><a href="https://github.com/rrrinav/Phos" target="_blank">Phos
+                            Compiler</a></div>
+                    <div class="tech-stack">C++23 · Compilers · Language Design</div>
+                    <ul class="pts">
+                        <li>Designed and developed a statically-typed programming language from scratch, building a
+                            custom lexer, recursive descent parser, and AST-walking interpreter.</li>
+                        <li>Engineered a robust type checker enforcing strict null-safety and implemented a highly
+                            optimized, non-atomic reference-counting smart pointer.</li>
+                        <li>Wrote a custom arena allocator to drastically reduce memory fragmentation and improve
+                            allocation speeds.</li>
+                    </ul>
                 </div>
+
+                <div class="project-card">
+                    <div class="project-index mono">02</div>
+                    <div class="project-title"><a href="https://github.com/rrrinav/rio" target="_blank">Rio: Async
+                            I/O</a></div>
+                    <div class="tech-stack">C++23 · C++20 Modules · io_uring</div>
+                    <ul class="pts">
+                        <li>Engineered a zero-cost, asynchronous I/O and networking framework in C++23 utilizing Linux's
+                            io_uring to achieve high-throughput, non-blocking socket operations.</li>
+                        <li>Architected a zero-allocation Future library using advanced template metaprogramming and
+                            C++20 modules to enable seamless async pipeline composition.</li>
+                        <li>Guaranteed strict memory safety and lock-free task cancellation by designing a custom
+                            heap-detach pattern.</li>
+                    </ul>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-index mono">03</div>
+                    <div class="project-title"><a href="https://github.com/rrrinav/rivage" target="_blank">Rivage:
+                            Map-Reduce</a></div>
+                    <div class="tech-stack">Golang · gRPC · Distributed Systems</div>
+                    <ul class="pts">
+                        <li>Architected a zero-dependency distributed Map-Reduce computation engine in Golang, utilizing
+                            gRPC for highly concurrent, low-latency cross-node remote procedure calls.</li>
+                        <li>Designed robust worker nodes for parallel data processing, achieving fault tolerance and
+                            seamless client-server state synchronization.</li>
+                        <li>Implemented a custom Write-Ahead Logging (WAL) mechanism to ensure strict data durability
+                            and system recovery.</li>
+                    </ul>
+                </div>
+
+                <div class="project-card last-row">
+                    <div class="project-index mono">04</div>
+                    <div class="project-title"><a href="https://github.com/Rrrinav/Dal-Monitoring" target="_blank">Drone
+                            Surveillance</a></div>
+                    <div class="tech-stack">Computer Vision · Edge Inference</div>
+                    <ul class="pts">
+                        <li>Built an autonomous UAV system to detect and geographically map floating lake trash using a
+                            custom semantic segmentation model.</li>
+                        <li>Integrated a real-time aerial image capture and inference pipeline on edge hardware to
+                            generate dynamic pollution heatmaps.</li>
+                    </ul>
+                </div>
+
+                <div class="project-card full last-row">
+                    <div class="project-index mono">05</div>
+                    <div class="project-title"><a href="https://github.com/rrrinav/echo-chamber" target="_blank">Echo
+                            Chamber</a></div>
+                    <div class="tech-stack">Node.js · WebSockets · ReactJS</div>
+                    <ul class="pts">
+                        <li>Developed a scalable full-stack messaging platform supporting global real-time chat, secure
+                            JWT authentication, and optimized media handling via Cloudinary.</li>
+                        <li>Engineered an event-driven Node.js backend using WebSockets for ultra-low-latency
+                            communication.</li>
+                    </ul>
+                </div>
+
             </div>
         </section>
 
-        <div class="sys_divider" aria-hidden="true">
-            <div class="node_tag mono">0x02</div>
-            <div class="trace_wrap">
-                <div class="trace_signal"></div>
+        <div class="divider" aria-hidden="true">
+            <div class="tag mono">0x02</div>
+            <div class="trace">
+                <div class="signal"></div>
             </div>
-            <div class="node_tag mono">0x03</div>
+            <div class="tag mono">0x03</div>
         </div>
 
         <section id="skills" class="reveal">
             <h2>Technical Stack</h2>
-            <div class="content_box">
-                <div class="skills_grid">
-                    <div class="skills_cat">Languages</div>
-                    <div class="skills_list">C, C++, Golang, Python, JavaScript, TypeScript, Java</div>
+            <div class="box">
+                <dl class="skills-dl">
 
-                    <div class="skills_cat">Systems</div>
-                    <div class="skills_list">Memory Management, Metaprogramming, Linux io_uring, Compilers, Distributed
-                        Systems</div>
+                    <dt class="skills-dt">Languages</dt>
+                    <dd class="skills-dd">
+                        <span class="skill-tag">C</span>
+                        <span class="skill-tag">C++</span>
+                        <span class="skill-tag">Golang</span>
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">TypeScript</span>
+                        <span class="skill-tag">Java</span>
+                    </dd>
 
-                    <div class="skills_cat">Frameworks</div>
-                    <div class="skills_list">React.js, Express, Node.js, Zustand, TensorFlow, Raylib, Boost, Eigen,
-                        OpenCV, NumPy</div>
+                    <dt class="skills-dt">Systems</dt>
+                    <dd class="skills-dd">
+                        <span class="skill-tag">Memory Management</span>
+                        <span class="skill-tag">Metaprogramming</span>
+                        <span class="skill-tag">Linux io_uring</span>
+                        <span class="skill-tag">Compilers</span>
+                        <span class="skill-tag">Distributed Systems</span>
+                    </dd>
 
-                    <div class="skills_cat">Tools</div>
-                    <div class="skills_list">Linux, Fedora, Neovim, Wayland, Git, Docker, gRPC, WebSockets</div>
-                </div>
+                    <dt class="skills-dt">Frameworks</dt>
+                    <dd class="skills-dd">
+                        <span class="skill-tag">React.js</span>
+                        <span class="skill-tag">Express</span>
+                        <span class="skill-tag">Node.js</span>
+                        <span class="skill-tag">Zustand</span>
+                        <span class="skill-tag">TensorFlow</span>
+                        <span class="skill-tag">Raylib</span>
+                        <span class="skill-tag">Boost</span>
+                        <span class="skill-tag">Eigen</span>
+                        <span class="skill-tag">OpenCV</span>
+                        <span class="skill-tag">NumPy</span>
+                    </dd>
+
+                    <dt class="skills-dt">Tools</dt>
+                    <dd class="skills-dd" style="border-bottom:none;">
+                        <span class="skill-tag">Linux</span>
+                        <span class="skill-tag">Fedora</span>
+                        <span class="skill-tag">Neovim</span>
+                        <span class="skill-tag">Wayland</span>
+                        <span class="skill-tag">Git</span>
+                        <span class="skill-tag">Docker</span>
+                        <span class="skill-tag">gRPC</span>
+                        <span class="skill-tag">WebSockets</span>
+                    </dd>
+
+                </dl>
             </div>
         </section>
 
-        <div class="sys_divider" aria-hidden="true">
-            <div class="node_tag mono">0x03</div>
-            <div class="trace_wrap">
-                <div class="trace_signal"></div>
+        <div class="divider" aria-hidden="true">
+            <div class="tag mono">0x03</div>
+            <div class="trace">
+                <div class="signal"></div>
             </div>
-            <div class="node_tag mono">0x04</div>
+            <div class="tag mono">0x04</div>
         </div>
 
         <section id="telemetry" class="reveal">
             <h2>Telemetry</h2>
-            <div class="content_box mono">
-                <div class="telemetry_board">
-                    <div class="t_col">
-                        <div class="t_header">NETWORK STATUS</div>
-                        <div id="git_stats">
-                            <div class="t_row"><span style="color: var(--text_muted)">Awaiting query...</span></div>
+            <div class="box mono">
+                <div class="tel-board">
+                    <div>
+                        <div class="tel-header">Network Status</div>
+                        <div id="git-stats">
+                            <div class="t-row"><span class="t-key">awaiting query...</span></div>
                         </div>
                     </div>
-                    <div class="t_col">
-                        <div class="t_header">RUNTIME COMPOSITION</div>
-                        <div id="git_langs">
-                            <div class="t_row"><span style="color: var(--text_muted)">Awaiting query...</span></div>
+                    <div>
+                        <div class="tel-header">Runtime Composition</div>
+                        <div id="git-langs">
+                            <div class="t-row"><span class="t-key">awaiting query...</span></div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="sys_divider" aria-hidden="true">
-            <div class="node_tag mono">0x04</div>
-            <div class="trace_wrap">
-                <div class="trace_signal"></div>
+        <div class="divider" aria-hidden="true">
+            <div class="tag mono">0x04</div>
+            <div class="trace">
+                <div class="signal"></div>
             </div>
-            <div class="node_tag mono">0xFF</div>
+            <div class="tag mono">0xFF</div>
         </div>
 
-        <!-- Dedicated Contact Section -->
         <section id="contact" class="reveal">
             <h2>Connection</h2>
-            <div class="contact_grid mono">
-                <a href="mailto:rinavhansa4@gmail.com" class="contact_link">
-                    <span>Email</span>
-                    <span>rinavhansa4@gmail.com</span>
+            <div class="contact-grid">
+                <a href="mailto:rinavhansa4@gmail.com" class="contact-link">
+                    <span class="contact-label">Email</span>
+                    <span class="contact-value">rinavhansa4@gmail.com</span>
+                    <span class="contact-arrow">↗</span>
                 </a>
-                <a href="https://github.com/rrrinav" target="_blank" class="contact_link">
-                    <span>GitHub</span>
-                    <span>/rrrinav</span>
+                <a href="https://github.com/rrrinav" target="_blank" class="contact-link">
+                    <span class="contact-label">GitHub</span>
+                    <span class="contact-value">/rrrinav</span>
+                    <span class="contact-arrow">↗</span>
                 </a>
-                <a href="https://www.linkedin.com/in/rinav-hansa-b0bb23291/" target="_blank" class="contact_link">
-                    <span>LinkedIn</span>
-                    <span>/rinav-hansa</span>
+                <a href="https://www.linkedin.com/in/rinav-hansa-b0bb23291/" target="_blank" class="contact-link">
+                    <span class="contact-label">LinkedIn</span>
+                    <span class="contact-value">/rinav-hansa</span>
+                    <span class="contact-arrow">↗</span>
                 </a>
             </div>
         </section>
@@ -949,62 +1300,48 @@
     </div>
 
     <script>
-        /* parallax and spotlight logic */
-        const center_x = window.innerWidth / 2;
-        const center_y = window.innerHeight / 2;
-
-        document.addEventListener('mousemove', (e) => {
-            const delta_x = (e.clientX - center_x) / center_x;
-            const delta_y = (e.clientY - center_y) / center_y;
-
-            document.documentElement.style.setProperty('--px', delta_x);
-            document.documentElement.style.setProperty('--py', delta_y);
-
-            document.documentElement.style.setProperty('--mouse_x', `${e.clientX}px`);
-            document.documentElement.style.setProperty('--mouse_y', `${e.clientY}px`);
+        /* Spotlight */
+        document.addEventListener('mousemove', e => {
+            document.documentElement.style.setProperty('--mx', `${e.clientX}px`);
+            document.documentElement.style.setProperty('--my', `${e.clientY}px`);
         });
 
-        /* smooth scroll reveal */
-        const reveal_observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('visible');
-            });
-        }, {threshold: 0.1});
-        document.querySelectorAll('.reveal').forEach(el => reveal_observer.observe(el));
+        /* Scroll reveal */
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => {if (e.isIntersecting) e.target.classList.add('visible');});
+        }, {threshold: 0.06});
+        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-        /* async telemetry module */
-        async function init_telemetry() {
+        /* Telemetry */
+        async function initTelemetry() {
             try {
-                const user_res = await fetch('https://api.github.com/users/rrrinav');
-                if (!user_res.ok) throw new Error();
-                const user_data = await user_res.json();
-
-                document.getElementById('git_stats').innerHTML = `
-                    <div class="t_row"><span style="color: var(--text_muted)">public_repos</span><span>${user_data.public_repos}</span></div>
-                    <div class="t_row"><span style="color: var(--text_muted)">followers</span><span>${user_data.followers}</span></div>
+                const uRes = await fetch('https://api.github.com/users/rrrinav');
+                if (!uRes.ok) throw new Error();
+                const u = await uRes.json();
+                document.getElementById('git-stats').innerHTML = `
+                    <div class="t-row"><span class="t-key">public_repos</span><span class="t-val">${u.public_repos}</span></div>
+                    <div class="t-row"><span class="t-key">followers</span><span class="t-val">${u.followers}</span></div>
                 `;
-
-                const repos_res = await fetch('https://api.github.com/users/rrrinav/repos?per_page=100');
-                const repos_data = await repos_res.json();
-                const lang_map = {};
-                repos_data.forEach(r => {if (r.language) lang_map[r.language] = (lang_map[r.language] || 0) + 1;});
-
-                const total_langs = Object.values(lang_map).reduce((a, b) => a + b, 0);
-                document.getElementById('git_langs').innerHTML = Object.entries(lang_map)
+                const rRes = await fetch('https://api.github.com/users/rrrinav/repos?per_page=100');
+                const repos = await rRes.json();
+                const langs = {};
+                repos.forEach(r => {if (r.language) langs[r.language] = (langs[r.language] || 0) + 1;});
+                const total = Object.values(langs).reduce((a, b) => a + b, 0);
+                document.getElementById('git-langs').innerHTML = Object.entries(langs)
                     .sort((a, b) => b[1] - a[1]).slice(0, 4)
-                    .map(([lang, count]) => `
-                        <div class="t_row">
-                            <span style="color: var(--text_muted)">${lang.toLowerCase()}</span>
-                            <span>${Math.round((count / total_langs) * 100)}%</span>
+                    .map(([lang, n]) => `
+                        <div class="t-row">
+                            <span class="t-key">${lang.toLowerCase()}</span>
+                            <span class="t-val">${Math.round((n / total) * 100)}%</span>
                         </div>
                     `).join('');
-            } catch (err) {
-                const err_html = '<div class="t_row"><span style="color: #ef4444">ERR: CONNECTION_REFUSED</span></div>';
-                document.getElementById('git_stats').innerHTML = err_html;
-                document.getElementById('git_langs').innerHTML = err_html;
+            } catch {
+                const err = '<div class="t-row"><span style="color:#ef4444;font-size:0.72rem">ERR: CONNECTION_REFUSED</span></div>';
+                document.getElementById('git-stats').innerHTML = err;
+                document.getElementById('git-langs').innerHTML = err;
             }
         }
-        init_telemetry();
+        initTelemetry();
     </script>
 </body>
 
