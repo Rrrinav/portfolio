@@ -15,11 +15,13 @@
         :root {
             /* Colors */
             --bg: #040404;
-            --border: rgba(255, 255, 255, 0.11);
-            --border-faint: rgba(255, 255, 255, 0.042);
+            --border: rgba(255, 255, 255, 0.22);
+            /* Enhanced contrast */
+            --border-faint: rgba(255, 255, 255, 0.08);
+            /* Enhanced blueprint visibility */
             --fg: #f0f2f5;
-            --muted: #5a6370;
-            --muted-mid: #8b949e;
+            --muted: #6e7681;
+            --muted-mid: #acb6c2;
 
             /* Spacing */
             --frame-inset: 3.5rem;
@@ -105,7 +107,7 @@
             height: 100vh;
             pointer-events: none;
             z-index: 9998;
-            background: radial-gradient(circle 600px at var(--mx, 50vw) var(--my, 50vh), rgba(255, 255, 255, 0.025), transparent 70%);
+            background: radial-gradient(circle 600px at var(--mx, 50vw) var(--my, 50vh), rgba(255, 255, 255, 0.035), transparent 70%);
         }
 
         .bg-grid {
@@ -310,7 +312,7 @@
             display: grid;
             grid-template-columns: 1fr auto;
             gap: 4rem;
-            align-items: start;
+            align-items: center;
         }
 
         .hero-text {
@@ -369,8 +371,10 @@
         }
 
         .hero-photo {
-            width: 200px;
-            height: 245px;
+            width: clamp(140px, 22vw, 220px);
+            /* Fully fluid asset container boundaries */
+            aspect-ratio: 4 / 5;
+            height: auto;
             border: 1px solid var(--border);
             background: rgba(255, 255, 255, 0.02);
             position: relative;
@@ -532,7 +536,6 @@
 
         h2 {
             font-size: var(--text-base);
-            /* Bumped up from sm */
             font-weight: 600;
             font-family: 'JetBrains Mono', monospace;
             letter-spacing: 0.22em;
@@ -546,7 +549,7 @@
 
         h2::before {
             content: '//';
-            color: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.15);
             font-weight: 300;
         }
 
@@ -593,12 +596,12 @@
         }
 
         .box:hover {
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .box:hover::before,
         .box:hover::after {
-            border-color: rgba(255, 255, 255, 0.45);
+            border-color: rgba(255, 255, 255, 0.55);
         }
 
         .projects-grid {
@@ -872,12 +875,16 @@
 
             .hero {
                 grid-template-columns: 1fr;
+                flex-direction: column-reverse;
+                /* Fix structural order alignment */
+                display: flex;
                 gap: 2.5rem;
+                align-items: start;
             }
 
             .hero-photo {
-                width: 150px;
-                height: 185px;
+                width: 140px;
+                /* Scales beautifully instead of collapsing */
             }
 
             .projects-grid {
@@ -928,8 +935,7 @@
             }
 
             .hero-photo {
-                width: 110px;
-                height: 135px;
+                width: 120px;
             }
 
             .projects-grid {
@@ -1091,7 +1097,7 @@
                     <div class="project-index mono">02</div>
                     <div class="project-title"><a href="https://github.com/rrrinav/rio" target="_blank">Rio: Async
                             I/O</a></div>
-                    <div class="tech-stack">C++23 · C++20 Modules · io_uring</div>
+                    <div class="tech-stack">C++23 · Futures · io_uring</div>
                     <ul class="pts">
                         <li>Engineered a zero-cost, asynchronous I/O and networking framework in C++23 utilizing Linux's
                             io_uring to achieve high-throughput, non-blocking socket operations.</li>
