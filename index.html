@@ -13,22 +13,17 @@
 
     <style>
         :root {
-            /* Colors */
             --bg: #040404;
             --border: rgba(255, 255, 255, 0.22);
-            /* Enhanced contrast */
             --border-faint: rgba(255, 255, 255, 0.08);
-            /* Enhanced blueprint visibility */
             --fg: #f0f2f5;
             --muted: #6e7681;
             --muted-mid: #acb6c2;
 
-            /* Spacing */
             --frame-inset: 3.5rem;
             --frame-v: 3rem;
             --content-pad: calc(var(--frame-inset) + 2rem);
 
-            /* Fluid Typography Scale */
             --text-hero: clamp(3.5rem, 8vw, 9rem);
             --text-xl: clamp(1.25rem, 2vw, 1.5rem);
             --text-lg: clamp(1.05rem, 1.2vw, 1.15rem);
@@ -107,7 +102,55 @@
             height: 100vh;
             pointer-events: none;
             z-index: 9998;
-            background: radial-gradient(circle 600px at var(--mx, 50vw) var(--my, 50vh), rgba(255, 255, 255, 0.035), transparent 70%);
+            background: radial-gradient(circle 600px at var(--mx, 50vw) var(--my, 50vh), rgba(255, 255, 255, 0.045), transparent 70%);
+        }
+
+        /* Ambient floating background gradients for depth */
+        .ambient-glow {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -4;
+            filter: blur(90px);
+            opacity: 0.7;
+        }
+
+        .glow-1 {
+            top: -10vh;
+            left: -10vw;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(140, 160, 255, 0.035) 0%, transparent 70%);
+            animation: float-1 25s ease-in-out infinite alternate;
+        }
+
+        .glow-2 {
+            bottom: -20vh;
+            right: -10vw;
+            width: 70vw;
+            height: 70vw;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.025) 0%, transparent 70%);
+            animation: float-2 30s ease-in-out infinite alternate;
+        }
+
+        @keyframes float-1 {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(15vw, 15vh) scale(1.1);
+            }
+        }
+
+        @keyframes float-2 {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(-15vw, -10vh) scale(1.15);
+            }
         }
 
         .bg-grid {
@@ -124,13 +167,24 @@
             background-size: 48px 48px;
             mask-image: radial-gradient(ellipse 90% 80% at 50% 35%, black 15%, transparent 75%);
             -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 35%, black 15%, transparent 75%);
+            animation: grid-move 20s linear infinite;
+        }
+
+        @keyframes grid-move {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 0 48px;
+            }
         }
 
         .wm {
             position: fixed;
             font-weight: 900;
             font-family: 'Inter', sans-serif;
-            color: rgba(255, 255, 255, 0.013);
+            color: rgba(255, 255, 255, 0.015);
             pointer-events: none;
             user-select: none;
             z-index: -1;
@@ -372,7 +426,6 @@
 
         .hero-photo {
             width: clamp(140px, 22vw, 220px);
-            /* Fully fluid asset container boundaries */
             aspect-ratio: 4 / 5;
             height: auto;
             border: 1px solid var(--border);
@@ -389,6 +442,9 @@
             object-position: center top;
             display: block;
             filter: grayscale(25%) contrast(1.05);
+            /* Ensured the image stays above the placeholder */
+            position: relative;
+            z-index: 5;
         }
 
         .hero-photo .photo-placeholder {
@@ -399,6 +455,8 @@
             align-items: center;
             justify-content: center;
             gap: 0.75rem;
+            /* Places the placeholder behind the loaded image */
+            z-index: 1;
         }
 
         .hero-photo .photo-placeholder .ph-icon {
@@ -432,7 +490,7 @@
             width: 12px;
             height: 12px;
             border: 1px solid var(--muted-mid);
-            z-index: 1;
+            z-index: 10;
             opacity: 0.45;
         }
 
@@ -458,7 +516,7 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
             animation: photo-scan 6s ease-in-out infinite;
             top: 0;
-            z-index: 2;
+            z-index: 15;
             pointer-events: none;
         }
 
@@ -876,7 +934,6 @@
             .hero {
                 grid-template-columns: 1fr;
                 flex-direction: column-reverse;
-                /* Fix structural order alignment */
                 display: flex;
                 gap: 2.5rem;
                 align-items: start;
@@ -884,7 +941,6 @@
 
             .hero-photo {
                 width: 140px;
-                /* Scales beautifully instead of collapsing */
             }
 
             .projects-grid {
@@ -942,10 +998,7 @@
                 grid-template-columns: 1fr;
             }
 
-            .project-card {
-                border-right: none;
-            }
-
+            .project-card,
             .project-card:nth-child(3n),
             .project-card:nth-child(2n) {
                 border-right: none;
@@ -1005,7 +1058,9 @@
             }
 
             .divider .signal,
-            .hero-photo .photo-scan {
+            .hero-photo .photo-scan,
+            .bg-grid,
+            .ambient-glow {
                 animation: none;
             }
         }
@@ -1016,7 +1071,11 @@
 
     <div id="scan-intro"></div>
     <div id="spotlight"></div>
+
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
     <div class="bg-grid"></div>
+
     <div class="wm">SYS_CORE</div>
 
     <div class="frame-line fl-top"></div>
@@ -1044,7 +1103,6 @@
         <header id="about" class="reveal">
             <div class="hero">
                 <div class="hero-text">
-                    <div class="sys-label">status == online <span class="blink">_</span></div>
                     <h1>RINAV</h1>
                     <p class="subtitle">Extracting maximum performance from modern hardware. Building zero-dependency
                         and low-level infrastructure in modern c++.</p>
@@ -1059,7 +1117,6 @@
                                 <circle cx="12" cy="7" r="4" />
                             </svg>
                         </div>
-                        <span class="ph-label">Photo</span>
                     </div>
                     <div class="photo-scan"></div>
                 </div>
