@@ -1139,14 +1139,14 @@
                     <div class="project-index mono">01</div>
                     <div class="project-title"><a href="https://github.com/rrrinav/Phos" target="_blank">Phos
                             Compiler</a></div>
-                    <div class="tech-stack">C++23 · Compilers · Language Design</div>
+                    <div class="tech-stack">C++ · Bytecode VM · Language Design</div>
                     <ul class="pts">
-                        <li>Designed and developed a statically-typed programming language from scratch, building a
-                            custom lexer, recursive descent parser, and AST-walking interpreter.</li>
-                        <li>Engineered a robust type checker enforcing strict null-safety and implemented a highly
-                            optimized, non-atomic reference-counting smart pointer.</li>
-                        <li>Wrote a custom arena allocator to drastically reduce memory fragmentation and improve
-                            allocation speeds.</li>
+                        <li>Statically-typed scripting language compiled to custom bytecode and run on a
+                            register-based VM with mark-sweep GC, closures, and green threads.</li>
+                        <li>Hand-written frontend: lexer, recursive-descent parser, resolver and semantic
+                            type-checker covering models, optionals, unions/enums, and match expressions.</li>
+                        <li>Arena-allocated compiler memory, interned strings, bytecode assembler, module
+                            system with FFI, and a REPL — no LLVM.</li>
                     </ul>
                 </div>
 
@@ -1154,14 +1154,13 @@
                     <div class="project-index mono">02</div>
                     <div class="project-title"><a href="https://github.com/rrrinav/rio" target="_blank">Rio: Async
                             I/O</a></div>
-                    <div class="tech-stack">C++23 · Futures · io_uring</div>
+                    <div class="tech-stack">C++23 · Modules · liburing</div>
                     <ul class="pts">
-                        <li>Engineered a zero-cost, asynchronous I/O and networking framework in C++23 utilizing Linux's
-                            io_uring to achieve high-throughput, non-blocking socket operations.</li>
-                        <li>Architected a zero-allocation Future library using advanced template metaprogramming and
-                            C++20 modules to enable seamless async pipeline composition.</li>
-                        <li>Guaranteed strict memory safety and lock-free task cancellation by designing a custom
-                            heap-detach pattern.</li>
+                        <li>Single-threaded async runtime on Linux liburing, shipped as C++23 named modules
+                            (<span class="mono">import rio</span>) — Futures, Tasks, and Promises included.</li>
+                        <li>Sync and async TCP/UDP/file I/O plus a buffered reader, minimal HTTP router/parser,
+                            and JSON utilities, with 17 example servers to steal from.</li>
+                        <li>Benches 144k round-trips/s at ~199µs avg RTT over 64k round-trips on 32 clients.</li>
                     </ul>
                 </div>
 
@@ -1169,14 +1168,14 @@
                     <div class="project-index mono">03</div>
                     <div class="project-title"><a href="https://github.com/rrrinav/rivage" target="_blank">Rivage:
                             Map-Reduce</a></div>
-                    <div class="tech-stack">Golang · gRPC · Distributed Systems</div>
+                    <div class="tech-stack">Go · gRPC · DAG Engine</div>
                     <ul class="pts">
-                        <li>Architected a zero-dependency distributed Map-Reduce computation engine in Golang, utilizing
-                            gRPC for highly concurrent, low-latency cross-node remote procedure calls.</li>
-                        <li>Designed robust worker nodes for parallel data processing, achieving fault tolerance and
-                            seamless client-server state synchronization.</li>
-                        <li>Implemented a custom Write-Ahead Logging (WAL) mechanism to ensure strict data durability
-                            and system recovery.</li>
+                        <li>Distributed Map-Reduce / DAG engine: Go coordinator, workers, and a standalone HTTP
+                            datastore, wired together over gRPC bidirectional streams.</li>
+                        <li>Affinity-aware scheduling for data locality, WAL-backed recovery, Prometheus-style
+                            metrics, and a live web dashboard with TLS/auth support.</li>
+                        <li>Did 10,000×10,000 matmul in ~39s wall-clock (≈17× speedup); ships wordcount, matmul,
+                            hashcrack, and primes examples.</li>
                     </ul>
                 </div>
 
@@ -1197,12 +1196,12 @@
                     <div class="project-index mono">05</div>
                     <div class="project-title"><a href="https://github.com/rrrinav/echo-chamber" target="_blank">Echo
                             Chamber</a></div>
-                    <div class="tech-stack">Node.js · WebSockets · ReactJS</div>
+                    <div class="tech-stack">Express · Socket.IO · React</div>
                     <ul class="pts">
-                        <li>Developed a scalable full-stack messaging platform supporting global real-time chat, secure
-                            JWT authentication, and optimized media handling via Cloudinary.</li>
-                        <li>Engineered an event-driven Node.js backend using WebSockets for ultra-low-latency
-                            communication.</li>
+                        <li>Real-time 1:1 chat: Socket.IO presence tracking with per-user socket map, MongoDB
+                            persistence, and JWT-cookie auth with bcrypt hashing.</li>
+                        <li>Image messages via Cloudinary, Zustand stores, and a Tailwind UI with sidebar, chat,
+                            profile, and settings pages.</li>
                     </ul>
                 </div>
 
